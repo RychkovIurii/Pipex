@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/13 16:16:07 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/13 17:04:24 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,24 +63,50 @@ int	cmd_init(t_struct *data, char *av[])
 	return (0);
 }
 
+int	is_space(char *str)
+{
+	while (*str != '\0')
+	{
+		if (*str == ' ')
+		{
+			return (1);
+		}
+		str++;
+	}
+	return (0);
+}
+
 int	file_init(t_struct *data, char *av[])
 {
-	char		*argv1;
-	char		*argv4;
+	char	*argv1;
+	char	*argv4;
 
 	argv1 = ft_strdup(av[1]);
 	if (!argv1)
-		{
-			ft_putstr_fd("Error\n", 2);
-			return (1);
-		}
+	{
+		ft_putstr_fd("Error: Memory allocation for argv1 failed\n", 2);
+		return (1);
+	}
+	if (is_space(argv1))
+	{
+		free(argv1);
+		ft_putstr_fd("Error: argv1 contains a space\n", 2);
+		return (1);
+	}
 	argv4 = ft_strdup(av[4]);
 	if (!argv4)
 		{
-			ft_putstr_fd("Error\n", 2);
+			ft_putstr_fd("Error: Memory allocation for argv4 failed\n", 2);
 			free(argv1);
 			return (1);
 		}
+	if (is_space(argv4))
+	{
+		free(argv1);
+		free(argv4);
+		ft_putstr_fd("Error: argv4 contains a space\n", 2);
+		return (1);
+	}
 	data->file1 = argv1;
 	data->file2 = argv4;
 	ft_printf("data->file1: %s\n", data->file1);
