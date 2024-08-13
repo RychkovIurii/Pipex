@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:59 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/13 14:14:48 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/13 15:01:26 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,5 +17,12 @@
 # include <errno.h>
 # include "libft.h"
 
+typedef struct s_struct
+{
+	char	**cmd1;
+	char	**cmd2;
+	char	*file1;
+	char	*file2;
+}	t_struct;
 
 #endif
