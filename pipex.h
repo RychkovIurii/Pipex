@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:59 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/14 14:05:52 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/14 15:06:30 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 # define PIPEX_H
 
 # include <sys/wait.h>
-# include <errno.h>
+# include <stdio.h>
+# include <fcntl.h>
 # include "libft.h"
 
 typedef struct s_struct
