@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/14 14:48:08 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/14 15:09:40 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,13 @@ void	data_init(t_struct *data, char *av[], char **envp)
 	cmd_init(data, av); // check free
 	file_init(data, av); // check free cmd
 	fd_init(data); // check free cdm and file
+	//TEST
+/* 	execute_command(data->cmd1, envp, data->path);
+	free_set(data->path);
+	free_set(data->cmd1);
+	free_set(data->cmd2);
+	free(data->file1);
+	free(data->file2); */
 }
 
 void	pipex(char *av[], char **envp)
