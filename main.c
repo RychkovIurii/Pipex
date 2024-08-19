@@ -6,11 +6,17 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/14 15:09:40 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/19 11:43:02 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+void error_exit(char *msg)
+{
+	perror(msg);
+	exit(1);
+}
 
 void	free_set(char **set)
 {
@@ -194,8 +200,81 @@ void	data_init(t_struct *data, char *av[], char **envp)
 void	pipex(char *av[], char **envp)
 {
 	t_struct	data;
+	int			pid1;
+	int			pid2;
 
 	data_init(&data, av, envp);
+
+	int	fd[2];
+
+	if (pipe(fd) == -1)
+		exit (1);
+		
+	pid1 = fork();
+	if (pid1 == -1)
+		exit (1);
+	
+	if (pid1 == 0)
+	{
+		//Child proccess 1 (ping)
+		if (dup2(data.fd_in, STDIN_FILENO) == -1)
+		{
+			perror("dup2 failed for STDIN");
+			exit (1);
+		}
+		if (dup2(fd[1], STDOUT_FILENO) == -1)
+		{
+			perror("dup2 failed for STDOUT");
+			exit (1);
+		}
+		close(fd[0]);
+		close(fd[1]);
+		execute_command(data.cmd1, envp, data.path);
+	}
+	pid2 = fork();
+	if (pid2 == -1)
+		exit (1);
+
+	if (pid2 == 0)
+	{
+		//Child proccess 2 (grep)
+
+		if (dup2(fd[0], STDIN_FILENO) == -1)
+		{
+			perror("dup2 failed for STDIN");
+			exit (1);
+		}
+		if (dup2(data.fd_out, STDOUT_FILENO) == -1)
+		{
+			perror("dup2 failed for STDOUT");
+			exit (1);
+		}
+		close(fd[0]);
+		close(fd[1]);
+		execute_command(data.cmd2, envp, data.path);
+	}
+
+	//Parent proccess
+	close(fd[0]);
+	close(fd[1]);
+	close(data.fd_in);
+	close(data.fd_out);
+	int	waitstatus1;
+	int	waitstatus2;
+
+	if (waitpid(pid1, &waitstatus1, 0) == -1)
+	{
+		perror("waitpid for pid1 failed");
+		exit (1);
+	}
+	if (waitpid(pid2, &waitstatus2, 0) == -1)
+	{
+		perror("waitpid for pid2 failed");
+		exit (1);
+	}
+	free_set(data.cmd1);
+	free_set(data.cmd2);
+	free_set(data.path);
 }
 
 int	main(int ac, char *av[], char **envp)
@@ -203,7 +282,6 @@ int	main(int ac, char *av[], char **envp)
 	if (ac == 5)
 	{
 		pipex(av, envp);
-		//ft_printf("check %s", av[0]);
 		return (0);
 	}
 	else
