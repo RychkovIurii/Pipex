@@ -6,17 +6,11 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/19 11:43:02 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/21 16:51:37 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-void error_exit(char *msg)
-{
-	perror(msg);
-	exit(1);
-}
 
 void	free_set(char **set)
 {
@@ -31,7 +25,7 @@ void	free_set(char **set)
 	free(set);
 }
 
-void print_split(char **split_array)
+/* void print_split(char **split_array)
 {
 	int i = 0;
 	
@@ -40,7 +34,7 @@ void print_split(char **split_array)
 		ft_printf("split_argv2[%d]: %s\n", i, split_array[i]);
 		i++;
 	}
-}
+} */
 
 void	cmd_init(t_struct *data, char *av[])
 {
@@ -118,7 +112,7 @@ void	file_init(t_struct *data, char *av[])
 			ft_putstr_fd("Error: Memory allocation for argv4 failed\n", 2);
 			exit (1);
 		}
-	if (is_space(data->file2) || is_space(data->file1))
+	if (is_space(data->file2) || is_space(data->file1)) // Not sure
 	{
 		free(data->file1);
 		free(data->file2);
@@ -185,9 +179,9 @@ void	path_init(t_struct *data, char **envp)
 void	data_init(t_struct *data, char *av[], char **envp)
 {
 	path_init(data, envp);
-	cmd_init(data, av); // check free
-	file_init(data, av); // check free cmd
-	fd_init(data); // check free cdm and file
+	file_init(data, av);
+	fd_init(data);
+	cmd_init(data, av); // check free file
 	//TEST
 /* 	execute_command(data->cmd1, envp, data->path);
 	free_set(data->path);
@@ -216,7 +210,7 @@ void	pipex(char *av[], char **envp)
 	
 	if (pid1 == 0)
 	{
-		//Child proccess 1 (ping)
+		//Child proccess 1
 		if (dup2(data.fd_in, STDIN_FILENO) == -1)
 		{
 			perror("dup2 failed for STDIN");
@@ -237,7 +231,7 @@ void	pipex(char *av[], char **envp)
 
 	if (pid2 == 0)
 	{
-		//Child proccess 2 (grep)
+		//Child proccess 2
 
 		if (dup2(fd[0], STDIN_FILENO) == -1)
 		{
