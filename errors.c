@@ -6,14 +6,13 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/21 16:51:02 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/21 16:53:29 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/22 10:56:53 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void error_exit(char *msg)
+void error_msg(char *msg, char *name)
 {
-	perror(msg);
-	exit(1);
+	ft_printf("pipex: %s: %s\n", msg, name);
 }

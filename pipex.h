@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:59 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/14 15:06:30 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/22 17:04:39 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,7 @@ typedef struct s_struct
 	int		fd_in;
 	int		fd_out;
 }	t_struct;
+
+void error_msg(char *msg, char *name);
 
 #endif
