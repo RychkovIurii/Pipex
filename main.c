@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/21 16:51:37 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/22 17:07:01 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ void	cmd_init(t_struct *data, char *av[])
 		free_set(data->cmd1);
 		exit (1);
 	}
+	/* data->cmd1 = ft_strdup(av[2]);
+	data->cmd2 = ft_strdup(av[3]); */
 }
 
 int	is_space(char *str)
@@ -68,32 +70,47 @@ int	is_space(char *str)
 
 void	fd_init(t_struct *data)
 {
-	/* if (access(data->file1, R_OK) == -1) // Not sure! I should ask
+	int	temp_fd;
+
+	if (access(data->file1, F_OK) == 0 && access(data->file1, R_OK) == -1)
+		error_msg("permission denied", data->file1);
+	else
 	{
-		perror("Error: file1 cannot be accessed for reading");
-		return 1;
-	} */
-	data->fd_in = open(data->file1, O_RDONLY);
-	if (data->fd_in < 0)
-	{
-		perror("Error opening file1");
-		free(data->file1);
-		free(data->file2);
-		exit (1);
+		data->fd_in = open(data->file1, O_RDONLY);
+		if (data->fd_in < 0)
+			error_msg("no such file or directory", data->file1);
 	}
-	/* if (access(data->file2, F_OK) == 0 && access(data->file2, W_OK) == -1)
-	{ // Not sure! I should ask
-		perror("Error: file2 cannot be accessed for writing");
-		return 1;
-	} */
-	data->fd_out = open(data->file2, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (data->fd_out < 0)
+	temp_fd = open(data->file2, O_DIRECTORY);
+	if (access(data->file2, F_OK) == 0 && access(data->file2, W_OK) == -1)
 	{
-		perror("Error opening file2");
+		error_msg("permission denied", data->file2);
+		close(temp_fd);
 		close(data->fd_in);
 		free(data->file1);
 		free(data->file2);
 		exit (1);
+	}
+	else if (temp_fd >= 0)
+	{
+		error_msg("is a directory", data->file2);
+		close(temp_fd);
+		close(data->fd_in);
+		free(data->file1);
+		free(data->file2);
+		exit(1);
+	}
+	else
+	{
+		data->fd_out = open(data->file2, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (data->fd_out < 0)
+		{
+			error_msg("no such file or directory", data->file2);
+			close(temp_fd);
+			close(data->fd_in);
+			free(data->file1);
+			free(data->file2);
+			exit (1);
+		}
 	}
 }
 
@@ -107,18 +124,18 @@ void	file_init(t_struct *data, char *av[])
 	}
 	data->file2 = ft_strdup(av[4]);
 	if (!data->file2)
-		{
-			free(data->file1);
-			ft_putstr_fd("Error: Memory allocation for argv4 failed\n", 2);
-			exit (1);
-		}
-	if (is_space(data->file2) || is_space(data->file1)) // Not sure
+	{
+		free(data->file1);
+		ft_putstr_fd("Error: Memory allocation for argv4 failed\n", 2);
+		exit (1);
+	}
+/* 	if (is_space(data->file2) || is_space(data->file1)) // Not sure
 	{
 		free(data->file1);
 		free(data->file2);
 		ft_putstr_fd("Error: file contains a space\n", 2);
 		exit (1);
-	}
+	} */
 /* 	ft_printf("data->file1: %s\n", data->file1);
 	ft_printf("data->file2: %s\n", data->file2);
 	free(data->file1);
@@ -152,6 +169,10 @@ void	execute_command(char **cmd, char **envp, char **path)
 	}
 	perror("execve failed");
 	exit(1);
+/* 	char *argv[] = {"sh", "-c", cmd, NULL};
+	execve("/bin/sh", argv, envp);
+	perror("execve failed");
+	exit(1); */
 }
 
 void	path_init(t_struct *data, char **envp)
@@ -269,6 +290,10 @@ void	pipex(char *av[], char **envp)
 	free_set(data.cmd1);
 	free_set(data.cmd2);
 	free_set(data.path);
+	free(data.file1);
+	free(data.file2);
+	/* free(data.cmd1);
+	free(data.cmd2); */
 }
 
 int	main(int ac, char *av[], char **envp)
