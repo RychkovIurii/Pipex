@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:59 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/22 17:04:39 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/26 19:02:04 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,11 @@
 # include <fcntl.h>
 # include "libft.h"
 
-typedef struct s_struct
-{
-	char	**path;
-	char	**cmd1;
-	char	**cmd2;
-	char	*file1;
-	char	*file2;
-	int		fd_in;
-	int		fd_out;
-}	t_struct;
-
-void error_msg(char *msg, char *name);
+void	first_child(char *av[], int *pipex, int *fd, char **envp);
+void	second_child(char *av[], int *pipex, int *fd, char **envp);
+void	error_permission(char *name, int code);
+void	error_command(char *name);
+void	error_nofile(char *name);
+void	error_directory(char *name);
 
 #endif
