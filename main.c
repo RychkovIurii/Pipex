@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/22 17:07:01 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/26 08:09:50 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,36 +36,120 @@ void	free_set(char **set)
 	}
 } */
 
+static int	is_space(char c)
+{
+	if (c == ' ' || c == '\t' || c == '\n')
+		return (1);
+	return (0);
+}
+
+static int	count_args(char *cmd)
+{
+	int count = 0;
+	int in_quotes = 0;
+	char quote_char = '\0';
+
+	while (*cmd)
+	{
+		while (is_space(*cmd))
+			cmd++;
+		if (*cmd == '\'' || *cmd == '\"')
+		{
+			quote_char = *cmd++;
+			in_quotes = 1;
+		}
+		while (*cmd && (in_quotes || !is_space(*cmd)))
+		{
+			if (*cmd == quote_char)
+				in_quotes = 0;
+			cmd++;
+		}
+		if (!in_quotes && (*cmd == '\0' || is_space(*cmd)))
+			count++;
+		if (*cmd)
+			cmd++;
+	}
+	return (count);
+}
+
+static char	*get_next_arg(char **cmd_ptr)
+{
+	char *cmd = *cmd_ptr;
+	char *arg;
+	int in_quotes = 0;
+	char quote_char = '\0';
+	int length = 0;
+
+	while (is_space(*cmd))
+		cmd++;
+	if (*cmd == '\'' || *cmd == '\"')
+	{
+		quote_char = *cmd++;
+		in_quotes = 1;
+	}
+	while (cmd[length] && (in_quotes || !is_space(cmd[length])))
+	{
+		if (cmd[length] == '\\' && cmd[length + 1])
+		{
+			length += 2;
+			continue;
+		}
+		if (cmd[length] == quote_char && in_quotes)
+		{
+			in_quotes = 0;
+			length++;
+			break;
+		}
+		length++;
+	}
+	arg = (char *)malloc(length + 1);
+	if (!arg)
+		return (NULL);
+	ft_strlcpy(arg, cmd, length + 1);
+	printf("arg: %s\n", arg);
+	*cmd_ptr = cmd + length;
+	while (is_space(**cmd_ptr))
+		(*cmd_ptr)++;
+	return (arg);
+}
+
+char	**split_command(char *cmd)
+{
+	int args_count = count_args(cmd);
+	char **args = (char **)malloc(sizeof(char *) * (args_count + 1));
+	int i = 0;
+
+	if (!args)
+		return (NULL);
+	while (*cmd)
+	{
+		args[i] = get_next_arg(&cmd);
+		if (!args[i])
+		{
+			free_set(args);
+			return (NULL);
+		}
+		i++;
+	}
+	args[i] = NULL;
+	return (args);
+}
+
 void	cmd_init(t_struct *data, char *av[])
 {
-	data->cmd1 = ft_split(av[2], ' ');
+	data->cmd1 = split_command(av[2]);
 	if (!data->cmd1)
 	{
-		ft_putstr_fd("ft_split\n", 2);
+		ft_putstr_fd("split_command\n", 2);
 		exit (1);
 	}
-	data->cmd2 = ft_split(av[3], ' ');
+	data->cmd2 = split_command(av[3]);
 	if (!data->cmd2)
 	{
-		ft_putstr_fd("ft_split\n", 2);
+		ft_putstr_fd("split_command\n", 2);
 		free_set(data->cmd1);
 		exit (1);
 	}
-	/* data->cmd1 = ft_strdup(av[2]);
-	data->cmd2 = ft_strdup(av[3]); */
-}
-
-int	is_space(char *str)
-{
-	while (*str != '\0')
-	{
-		if (*str == ' ')
-		{
-			return (1);
-		}
-		str++;
-	}
-	return (0);
 }
 
 void	fd_init(t_struct *data)
@@ -169,10 +253,6 @@ void	execute_command(char **cmd, char **envp, char **path)
 	}
 	perror("execve failed");
 	exit(1);
-/* 	char *argv[] = {"sh", "-c", cmd, NULL};
-	execve("/bin/sh", argv, envp);
-	perror("execve failed");
-	exit(1); */
 }
 
 void	path_init(t_struct *data, char **envp)
@@ -292,8 +372,6 @@ void	pipex(char *av[], char **envp)
 	free_set(data.path);
 	free(data.file1);
 	free(data.file2);
-	/* free(data.cmd1);
-	free(data.cmd2); */
 }
 
 int	main(int ac, char *av[], char **envp)
