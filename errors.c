@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:40:57 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/26 19:26:12 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/27 18:26:08 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void	error_msg(char *msg, char *name)
 {
-	write(2, "pipex: ", 7);
+	write(2, "zsh:1: ", 7);
 	write(2, msg, ft_strlen(msg));
 	write(2, ": ", 2);
 	if (name && name[0] != '\0')
@@ -34,14 +34,15 @@ void	error_command(char *name)
 	exit (127);
 }
 
-void	error_nofile(char *name)
+void	error_nofile(char *name, int code)
 {
 	error_msg("no such file or directory", name);
-	exit (127);
+	exit (code);
 }
 
-void	error_directory(char *name)
+/* void	error_directory(char *name)
 {
 	error_msg("is a directory", name);
 	exit (127);
 }
+ */

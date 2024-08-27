@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 15:59:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/27 11:13:31 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/27 17:55:50 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,15 @@ static void	fd_out_init(int *pipex, char *av[])
 {
 	int	temp_fd;
 
-	temp_fd = open(av[4], O_DIRECTORY);
+	temp_fd = open(av[3], O_DIRECTORY);
 	if (temp_fd >= 0)
 	{
 		close(temp_fd);
 		close(pipex[0]);
-		error_directory(av[4]);
+		error_permission(av[3], 126);
 	}
+	if (access(av[3], F_OK) == 0 && access(av[3], X_OK) == -1)
+		error_permission(av[3], 126);
 	if (access(av[4], F_OK) == 0 && access(av[4], W_OK) == -1)
 	{
 		close(pipex[0]);
@@ -34,11 +36,9 @@ static void	fd_out_init(int *pipex, char *av[])
 		if (pipex[1] < 0)
 		{
 			close(pipex[0]);
-			error_nofile(av[4]);
+			error_nofile(av[4], 1);
 		}
 	}
-	if (access(av[3], F_OK) == 0 && access(av[3], X_OK) == -1)
-		error_permission(av[3], 126);
 }
 
 int	is_env(char **envp)
@@ -59,6 +59,8 @@ int	is_env(char **envp)
 
 static void	execute_command(char *cmd, char **envp)
 {
+	char **argv;
+	
 	if (!cmd || cmd[0] == '\0')
 		error_permission(cmd, 126);
 	while (*cmd == ' ')
@@ -67,30 +69,52 @@ static void	execute_command(char *cmd, char **envp)
 		error_command(cmd);
 	if (cmd[0] == '/' || cmd[0] == '.')
 	{
-		char *argv[] = {cmd, NULL};
-		execve(cmd, argv, envp);
-		error_nofile(cmd);
+		argv = ft_split(cmd, ' ');
+		if (!argv)
+			perror("ft_split failed");
+		execve(argv[0], argv, envp);
+		error_nofile(cmd, 127);
 	}
 	if (!is_env(envp))
 		error_command(cmd);
-	char *argv[] = {"bash", "-c", cmd, NULL};
-	execve("/bin/bash", argv, envp);
+	char	*zsh_argv[] = {"zsh", "-c", cmd, NULL};
+	execve("/bin/zsh", zsh_argv, envp);
 	perror("execve failed");
 	exit(1);
 }
 
 void	first_child(char *av[], int *pipex, int *fd, char **envp)
 {
+	int	temp_fd;
+
+	if (access(av[2], F_OK) == 0 && access(av[2], X_OK) == -1)
+		error_permission(av[2], 126);
+	temp_fd = open(av[2], O_DIRECTORY);
+	if (temp_fd >= 0)
+	{
+		close(temp_fd);
+		error_permission(av[2], 126);
+	}
 	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) == -1)
 		error_permission(av[1], 126);
 	else
 	{
 		pipex[0] = open(av[1], O_RDONLY);
 		if (pipex[0] < 0)
-			error_nofile(av[1]);
+			error_nofile(av[1], 127);
 	}
-	if (access(av[2], F_OK) == 0 && access(av[2], X_OK) == -1)
+/* 	if (access(av[2], F_OK) == 0 && access(av[2], X_OK) == -1)
+	{
 		error_permission(av[2], 126);
+		close(pipex[0]);
+	} */
+/* 	char	**path = path_init(envp);
+	if (!is_cmd_valid(path, av[2]))
+	{
+		close(pipex[0]);
+		free_set(path);
+		error_command(av[2]);
+	} */
 	dup2(pipex[0], STDIN_FILENO);
 	dup2(fd[1], STDOUT_FILENO);
 	close(fd[0]);
@@ -102,6 +126,13 @@ void	first_child(char *av[], int *pipex, int *fd, char **envp)
 void	second_child(char *av[], int *pipex, int *fd, char **envp)
 {
 	fd_out_init(pipex, av);
+/* 	char	**path2 = path_init(envp);
+	if (!is_cmd_valid(path2, av[3]))
+	{
+		close(pipex[0]);
+		free_set(path2);
+		error_command(av[3]);
+	} */
 	dup2(fd[0], STDIN_FILENO);
 	dup2(pipex[1], STDOUT_FILENO);
 	close(fd[0]);
