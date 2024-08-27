@@ -6,21 +6,11 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/26 17:52:02 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/27 11:13:45 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-void	error_msg(char *msg, char *name)
-{
-	write(2, "pipex: ", 7);
-	write(2, msg, ft_strlen(msg));
-	write(2, ": ", 2);
-	if (name && name[0] != '\0')
-		write(2, name, ft_strlen(name));
-	write(2, "\n", 1);
-}
 
 int	pipex(char *av[], char **envp)
 {
@@ -32,15 +22,24 @@ int	pipex(char *av[], char **envp)
 	int		waitstatus2;
 
 	if (pipe(fd) == -1)
-		exit (1);
+	{
+		perror("pipe failed");
+		exit(1);
+	}
 	pid1 = fork();
 	if (pid1 == -1)
-		exit (1);
+	{
+		perror("fork failed for first child");
+		exit(1);
+	}
 	if (pid1 == 0)
 		first_child(av, pipex, fd, envp);
 	pid2 = fork();
 	if (pid2 == -1)
-		exit (1);
+	{
+		perror("fork failed for second child");
+		exit(1);
+	}
 	if (pid2 == 0)
 		second_child(av, pipex, fd, envp);
 	close(fd[0]);

@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 15:59:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/26 19:37:27 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/27 11:13:31 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ static void	fd_out_init(int *pipex, char *av[])
 	}
 	if (access(av[4], F_OK) == 0 && access(av[4], W_OK) == -1)
 	{
-		close(temp_fd);
 		close(pipex[0]);
 		error_permission(av[4], 1);
 	}
@@ -74,8 +73,8 @@ static void	execute_command(char *cmd, char **envp)
 	}
 	if (!is_env(envp))
 		error_command(cmd);
-	char *argv[] = {"zsh", "-c", cmd, NULL};
-	execve("/bin/zsh", argv, envp);
+	char *argv[] = {"bash", "-c", cmd, NULL};
+	execve("/bin/bash", argv, envp);
 	perror("execve failed");
 	exit(1);
 }
