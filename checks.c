@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 11:09:27 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/27 18:24:30 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/27 21:49:23 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@
 		return (1);
 	return (0);
 }
- */
 
 void	free_set(char **set)
 {
@@ -99,7 +98,7 @@ char	**path_init(char **envp)
 	}
 	return (path);
 }
-
+ */
 /* irychkov@c1r4p1 ~/Desktop/Pipex_dev
  % ./pipex infile "xxx" "/xxx/xxx" outfile1
 zsh:1: no such file or directory: /xxx/xxx
@@ -109,3 +108,62 @@ irychkov@c1r4p1 ~/Desktop/Pipex_dev
 zsh: command not found: xxx
 zsh: no such file or directory: /xxx/xxx
  */
+
+static int	new_len(char *str)
+{
+	int	len;
+
+	len = 0;
+	while (str[len])
+	{
+		if (str[len] == '$')
+			len+=2;
+		len++;
+	}
+	return (len);
+}
+
+int is_dollar(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '$')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+char *add_backslash(char *str)
+{
+	int	i;
+	int	j;
+	char	*new_str;
+
+	i = 0;
+	j = 0;
+	new_str = (char *)malloc(sizeof(char) * (new_len(str) + 1));
+	if (!new_str)
+	{
+		perror("malloc failed");
+		exit(1);
+	}
+	while (str[i])
+	{
+		if (str[i] == '$')
+		{
+			new_str[j] = '\\';
+			j++;
+			new_str[j] = str[i];
+		}
+		else
+			new_str[j] = str[i];
+		i++;
+		j++;
+	}
+	new_str[j] = '\0';
+	return (new_str);
+}

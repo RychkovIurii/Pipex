@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 15:59:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/27 17:55:50 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/27 21:51:23 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static void	execute_command(char *cmd, char **envp)
 		error_command(cmd);
 	if (cmd[0] == '/' || cmd[0] == '.')
 	{
-		argv = ft_split(cmd, ' ');
+		argv = ft_split(cmd, ' '); // free this
 		if (!argv)
 			perror("ft_split failed");
 		execve(argv[0], argv, envp);
@@ -77,6 +77,8 @@ static void	execute_command(char *cmd, char **envp)
 	}
 	if (!is_env(envp))
 		error_command(cmd);
+	if(is_dollar(cmd))
+		cmd = add_backslash(cmd); // free this
 	char	*zsh_argv[] = {"zsh", "-c", cmd, NULL};
 	execve("/bin/zsh", zsh_argv, envp);
 	perror("execve failed");
