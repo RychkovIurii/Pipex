@@ -6,21 +6,42 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/27 11:13:45 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/28 17:19:49 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	pipex(char *av[], char **envp)
+static int	wait_for_children(pid_t pid1, pid_t pid2)
+{
+	int	waitstatus1;
+	int	waitstatus2;
+	int	signal_number;
+
+	if (waitpid(pid1, &waitstatus1, 0) == -1)
+		error_waitpid();
+	if (waitpid(pid2, &waitstatus2, 0) == -1)
+		error_waitpid();
+	if (WIFSIGNALED(waitstatus2))
+	{
+		signal_number = WTERMSIG(waitstatus2);
+		return (128 + signal_number);
+	}
+	if (WIFEXITED(waitstatus2))
+		return (WEXITSTATUS(waitstatus2));
+	else
+		return (1);
+}
+
+static int	pipex(char *av[], char **envp)
 {
 	int		pipex[2];
 	int		fd[2];
-	int		pid1;
-	int		pid2;
-	int		waitstatus1;
-	int		waitstatus2;
+	pid_t	pid1;
+	pid_t	pid2;
 
+	ft_memset(pipex, -1, sizeof(pipex));
+	ft_memset(fd, -1, sizeof(fd));
 	if (pipe(fd) == -1)
 	{
 		perror("pipe failed");
@@ -28,48 +49,16 @@ int	pipex(char *av[], char **envp)
 	}
 	pid1 = fork();
 	if (pid1 == -1)
-	{
-		perror("fork failed for first child");
-		exit(1);
-	}
+		error_fork(fd, pipex);
 	if (pid1 == 0)
 		first_child(av, pipex, fd, envp);
 	pid2 = fork();
 	if (pid2 == -1)
-	{
-		perror("fork failed for second child");
-		exit(1);
-	}
+		error_fork(fd, pipex);
 	if (pid2 == 0)
 		second_child(av, pipex, fd, envp);
-	close(fd[0]);
-	close(fd[1]);
-	close(pipex[0]);
-	close(pipex[1]);
-
-	if (waitpid(pid1, &waitstatus1, 0) == -1)
-	{
-		perror("waitpid for pid1 failed");
-		exit (1);
-	}
-	if (waitpid(pid2, &waitstatus2, 0) == -1)
-	{
-		perror("waitpid for pid2 failed");
-		exit (1);
-	}
-	if (WIFSIGNALED(waitstatus2))
-	{
-		int signal_number = WTERMSIG(waitstatus2);
-		return (128 + signal_number);
-	}
-	if (WIFEXITED(waitstatus2))
-	{
-		return WEXITSTATUS(waitstatus2);
-	}
-	else
-	{
-		return 1;
-	}
+	close_pipes(fd, pipex);
+	return (wait_for_children(pid1, pid2));
 }
 
 int	main(int ac, char *av[], char **envp)

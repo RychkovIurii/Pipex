@@ -6,13 +6,13 @@
 #    By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/13 13:51:32 by irychkov          #+#    #+#              #
-#    Updated: 2024/08/27 21:51:57 by irychkov         ###   ########.fr        #
+#    Updated: 2024/08/28 17:18:46 by irychkov         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
-SRCS = main.c child_process.c errors.c checks.c
+SRCS = main.c child_process.c errors.c sys_errors.c checks.c free.c exec.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -22,7 +22,7 @@ LIBFT_DIR = ./libft
 
 LIBFT = $(LIBFT_DIR)/libft.a
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 
 CC = cc
 
