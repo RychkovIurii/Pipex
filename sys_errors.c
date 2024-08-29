@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 10:36:49 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/28 17:41:38 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/29 16:35:43 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,11 @@ void	error_malloc(int fd[2], int pipex[2])
 	exit(1);
 }
 
-void	error_split(int fd[2], int pipex[2])
+void	error_execve(int flag, char *cmd)
 {
-	perror("ft_split failed");
-	close_pipes(fd, pipex);
+	if (flag)
+		free(cmd);
+	perror("execve failed");
 	exit(1);
 }
 

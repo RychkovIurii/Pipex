@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 15:59:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/29 11:55:58 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/29 14:27:43 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,40 +14,18 @@
 
 static void	fd_out_init(int *pipex, char *av[], int fd[2])
 {
-	int	temp_fd;
-
-	temp_fd = open(av[3], O_DIRECTORY);
-	if (temp_fd >= 0)
-	{
-		close(temp_fd);
-		error_permission(av[3], 126, fd, pipex);
-	}
-/* 	if (access(av[3], F_OK) == 0 && access(av[3], X_OK) == -1)
-		error_permission(av[3], 126, fd, pipex); */
+	pipex[1] = open(av[4], O_DIRECTORY);
+	if (pipex[1] >= 0)
+		error_directory(av[4], 126, fd, pipex);
 	if (access(av[4], F_OK) == 0 && access(av[4], W_OK) == -1)
 		error_permission(av[4], 1, fd, pipex);
-	else
-	{
-		pipex[1] = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (pipex[1] < 0)
-			error_nofile(av[4], 1, fd, pipex);
-	}
-	if (access(av[3], F_OK) == 0 && access(av[3], X_OK) == -1)
-		error_permission(av[3], 126, fd, pipex);
+	pipex[1] = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (pipex[1] < 0)
+		error_nofile(av[4], 1, fd, pipex);
 }
 
 static void	fd_in_init(int *pipex, char *av[], int fd[2])
 {
-	int	temp_fd;
-
-	if (access(av[2], F_OK) == 0 && access(av[2], X_OK) == -1)
-		error_permission(av[2], 126, fd, pipex);
-	temp_fd = open(av[2], O_DIRECTORY);
-	if (temp_fd >= 0)
-	{
-		close(temp_fd);
-		error_permission(av[2], 126, fd, pipex);
-	}
 	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) == -1)
 		error_permission(av[1], 126, fd, pipex);
 	else

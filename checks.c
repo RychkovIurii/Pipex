@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 11:09:27 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/29 11:18:26 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/29 16:34:33 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,12 +81,13 @@ static int	is_env(char **envp)
 void	exec_with_zsh(char *cmd, char **envp, int fd[2], int pipex[2])
 {
 	int		flag;
+	char	*argv;
 	char	*zsh_argv[4];
 
 	flag = 0;
+	argv = NULL;
 	zsh_argv[0] = "zsh";
 	zsh_argv[1] = "-c";
-	zsh_argv[2] = NULL;
 	zsh_argv[3] = NULL;
 	if (is_dollar(cmd))
 	{
@@ -96,12 +97,12 @@ void	exec_with_zsh(char *cmd, char **envp, int fd[2], int pipex[2])
 	zsh_argv[2] = cmd;
 	if (!is_env(envp) || (cmd[0] == '/' || cmd[0] == '.'))
 	{
+		argv = ft_strjoin("unset PATH; ", cmd);
+		zsh_argv[2] = argv;
 		execve("/bin/zsh", zsh_argv, NULL);
+		free(argv);
 		error_command(cmd, fd, pipex, flag);
 	}
 	execve("/bin/zsh", zsh_argv, envp);
-	if (flag)
-		free(cmd);
-	perror("execve failed");
-	exit(1);
+	error_execve(flag, cmd);
 }

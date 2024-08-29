@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:40:57 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/29 10:32:14 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/29 12:04:59 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,13 @@ void	error_command(char *name, int fd[2], int pipex[2], int flag)
 void	error_nofile(char *name, int code, int fd[2], int pipex[2])
 {
 	error_msg("no such file or directory", name);
+	close_pipes(fd, pipex);
+	exit (code);
+}
+
+void	error_directory(char *name, int code, int fd[2], int pipex[2])
+{
+	error_msg("is a directory", name);
 	close_pipes(fd, pipex);
 	exit (code);
 }
