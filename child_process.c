@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 15:59:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/28 17:02:06 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/29 11:55:58 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ static void	fd_out_init(int *pipex, char *av[], int fd[2])
 		close(temp_fd);
 		error_permission(av[3], 126, fd, pipex);
 	}
-	if (access(av[3], F_OK) == 0 && access(av[3], X_OK) == -1)
-		error_permission(av[3], 126, fd, pipex);
+/* 	if (access(av[3], F_OK) == 0 && access(av[3], X_OK) == -1)
+		error_permission(av[3], 126, fd, pipex); */
 	if (access(av[4], F_OK) == 0 && access(av[4], W_OK) == -1)
 		error_permission(av[4], 1, fd, pipex);
 	else
@@ -32,6 +32,8 @@ static void	fd_out_init(int *pipex, char *av[], int fd[2])
 		if (pipex[1] < 0)
 			error_nofile(av[4], 1, fd, pipex);
 	}
+	if (access(av[3], F_OK) == 0 && access(av[3], X_OK) == -1)
+		error_permission(av[3], 126, fd, pipex);
 }
 
 static void	fd_in_init(int *pipex, char *av[], int fd[2])
@@ -54,6 +56,17 @@ static void	fd_in_init(int *pipex, char *av[], int fd[2])
 		if (pipex[0] < 0)
 			error_nofile(av[1], 127, fd, pipex);
 	}
+}
+
+void	execute_command(char *cmd, char **envp, int fd[2], int pipex[2])
+{
+	if (!cmd || cmd[0] == '\0')
+		error_permission(cmd, 126, fd, pipex);
+	while (*cmd == ' ')
+		cmd++;
+	if (cmd[0] == '\0')
+		error_command(cmd, fd, pipex, 0);
+	exec_with_zsh(cmd, envp, fd, pipex);
 }
 
 void	first_child(char *av[], int *pipex, int *fd, char **envp)

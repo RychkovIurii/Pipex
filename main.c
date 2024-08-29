@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/28 17:19:49 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/29 11:22:51 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,13 +67,8 @@ int	main(int ac, char *av[], char **envp)
 
 	status = 1;
 	if (ac == 5)
-	{
 		status = pipex(av, envp);
-		return (status);
-	}
 	else
-	{
 		ft_putstr_fd("Usage: ./pipex file1 cmd1 cmd2 file2\n", 2);
-		return (status);
-	}
+	return (status);
 }

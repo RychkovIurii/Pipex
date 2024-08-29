@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 11:09:27 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/28 17:35:52 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/29 11:18:26 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,19 +80,28 @@ static int	is_env(char **envp)
 
 void	exec_with_zsh(char *cmd, char **envp, int fd[2], int pipex[2])
 {
+	int		flag;
 	char	*zsh_argv[4];
 
+	flag = 0;
 	zsh_argv[0] = "zsh";
 	zsh_argv[1] = "-c";
 	zsh_argv[2] = NULL;
 	zsh_argv[3] = NULL;
-	if (!is_env(envp))
-		error_command(cmd, fd, pipex);
 	if (is_dollar(cmd))
+	{
 		cmd = add_backslash(cmd, fd, pipex);
+		flag = 1;
+	}
 	zsh_argv[2] = cmd;
+	if (!is_env(envp) || (cmd[0] == '/' || cmd[0] == '.'))
+	{
+		execve("/bin/zsh", zsh_argv, NULL);
+		error_command(cmd, fd, pipex, flag);
+	}
 	execve("/bin/zsh", zsh_argv, envp);
-	free(cmd);
+	if (flag)
+		free(cmd);
 	perror("execve failed");
 	exit(1);
 }

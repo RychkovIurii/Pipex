@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:40:57 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/28 12:59:21 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/29 10:32:14 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,11 @@ void	error_permission(char *name, int code, int fd[2], int pipex[2])
 	exit (code);
 }
 
-void	error_command(char *name, int fd[2], int pipex[2])
+void	error_command(char *name, int fd[2], int pipex[2], int flag)
 {
 	error_msg("command not found", name);
+	if (flag)
+		free(name);
 	close_pipes(fd, pipex);
 	exit (127);
 }
