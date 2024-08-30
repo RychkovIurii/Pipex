@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 15:59:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/29 14:27:43 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/30 17:21:53 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,28 +47,35 @@ void	execute_command(char *cmd, char **envp, int fd[2], int pipex[2])
 	exec_with_zsh(cmd, envp, fd, pipex);
 }
 
-void	first_child(char *av[], int *pipex, int *fd, char **envp)
+void	first_child(char *av[], int *pipex, int *fd, char **envp/* , int sync_fd */)
 {
+	close(fd[0]);
 	fd_in_init(pipex, av, fd);
 	if (dup2(pipex[0], STDIN_FILENO) == -1)
 		error_dup(fd, pipex);
 	if (dup2(fd[1], STDOUT_FILENO) == -1)
 		error_dup(fd, pipex);
-	close(fd[0]);
 	close(fd[1]);
 	close(pipex[0]);
+/* 	write(sync_fd, "", 1);
+	close(sync_fd); */
 	execute_command(av[2], envp, fd, pipex);
 }
 
 void	second_child(char *av[], int *pipex, int *fd, char **envp)
 {
+	close(fd[1]);
 	fd_out_init(pipex, av, fd);
 	if (dup2(fd[0], STDIN_FILENO) == -1)
 		error_dup(fd, pipex);
 	if (dup2(pipex[1], STDOUT_FILENO) == -1)
 		error_dup(fd, pipex);
 	close(fd[0]);
-	close(fd[1]);
 	close(pipex[1]);
+/* 	int increase = 0;
+	for (int i = 0; i < 10000000; ++i)
+	{
+		increase = i;
+	} */
 	execute_command(av[3], envp, fd, pipex);
 }
