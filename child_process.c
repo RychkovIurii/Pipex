@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 15:59:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/30 17:21:53 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/31 16:09:56 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,19 @@ void	first_child(char *av[], int *pipex, int *fd, char **envp/* , int sync_fd */
 	execute_command(av[2], envp, fd, pipex);
 }
 
+void	wait_exec1(void)
+{
+	int sync_time;
+
+	sync_time = 0;
+	while (sync_time < 10000000)
+		++sync_time;
+}
+
 void	second_child(char *av[], int *pipex, int *fd, char **envp)
 {
 	close(fd[1]);
+	wait_exec1();
 	fd_out_init(pipex, av, fd);
 	if (dup2(fd[0], STDIN_FILENO) == -1)
 		error_dup(fd, pipex);
@@ -72,10 +82,5 @@ void	second_child(char *av[], int *pipex, int *fd, char **envp)
 		error_dup(fd, pipex);
 	close(fd[0]);
 	close(pipex[1]);
-/* 	int increase = 0;
-	for (int i = 0; i < 10000000; ++i)
-	{
-		increase = i;
-	} */
 	execute_command(av[3], envp, fd, pipex);
 }

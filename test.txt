@@ -1,0 +1,1 @@
+./pipex infile "cat /dev/urandom" "head -n 1" outfile

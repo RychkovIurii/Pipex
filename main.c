@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/29 14:00:02 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/08/31 15:49:30 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,10 @@ static int	pipex(char *av[], char **envp)
 		error_fork(fd, pipex);
 	if (pid1 == 0)
 		first_child(av, pipex, fd, envp);
+/* 	close(sync_pipe[1]);
+	char buf;
+	read(sync_pipe[0], &buf, 1);
+	close(sync_pipe[0]); */
 	pid2 = fork();
 	if (pid2 == -1)
 		error_fork(fd, pipex);
