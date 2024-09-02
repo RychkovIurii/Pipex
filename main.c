@@ -6,37 +6,37 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 21:39:11 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 22:30:10 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void check_error_files(const char *file1, const char *file2)
+static void handle_file_errors(const char *filename)
 {
 	int		fd;
 	char	*line;
 
-	fd = open(file1, O_RDONLY);
-	if (fd > 0)
+	fd = open(filename, O_RDONLY);
+	if (fd >= 0)
 	{
-		while ((line = get_next_line(fd)) != NULL)
+		line = get_next_line(fd);
+		while (line != NULL)
 		{
 			write(2, line, ft_strlen(line));
 			free(line);
+			line = get_next_line(fd);
 		}
 		close(fd);
 	}
-	fd = open(file2, O_RDONLY);
-	if (fd > 0)
-	{
-		while ((line = get_next_line(fd)) != NULL)
-		{
-			write(2, line, ft_strlen(line));
-			free(line);
-		}
-		close(fd);
-	}
+	else
+		error_open();
+}
+
+static void check_error_files(const char *file1, const char *file2)
+{
+	handle_file_errors(file1);
+	handle_file_errors(file2);
 }
 
 static int	wait_for_children(pid_t pid1, pid_t pid2)
@@ -50,8 +50,8 @@ static int	wait_for_children(pid_t pid1, pid_t pid2)
 	if (waitpid(pid2, &waitstatus2, 0) == -1)
 		error_waitpid();
 	check_error_files("/tmp/error1.log", "/tmp/error2.log");
-	unlink("/tmp/error1.log");
-	unlink("/tmp/error2.log");
+	unlink("/tmp/error1.log"); //check failed
+	unlink("/tmp/error2.log"); //check failed
 	if (WIFSIGNALED(waitstatus2))
 	{
 		signal_number = WTERMSIG(waitstatus2);
@@ -71,22 +71,15 @@ static int	pipex(char *av[], char **envp)
 
 	ft_memset(&fds, -1, sizeof(t_pipex));
 	if (pipe(fds.fd) == -1)
-	{
-		perror("pipe failed");
-		exit(1);
-	}
+		error_pipe();
 	fds.error_fd1 = open("/tmp/error1.log", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fds.error_fd1 < 0)
-	{
-		perror("open failed");
-		exit(1);
-	}
+		error_open();
 	fds.error_fd2 = open("/tmp/error2.log", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fds.error_fd2 < 0)
 	{
-		perror("open failed");
 		close(fds.error_fd1);
-		exit(1);
+		error_open();
 	}
 	pid1 = fork();
 	if (pid1 == -1)

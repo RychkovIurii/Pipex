@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 11:09:27 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 21:35:13 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 22:07:11 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,12 +97,11 @@ void	exec_with_zsh(char *cmd, char **envp, t_pipex *fds)
 	zsh_argv[2] = cmd;
 	if (!is_env(envp) || (cmd[0] == '/' || cmd[0] == '.'))
 	{
-		argv = ft_strjoin("unset PATH; ", cmd); //protect
+		argv = ft_strjoin("unset PATH; ", cmd);
+		if (!argv)
+			error_strjoin(fds, flag, cmd);
 		zsh_argv[2] = argv;
 	}
 	execve("/bin/zsh", zsh_argv, envp);
-	if (argv)
-		free(argv);
-/* 	error_command(cmd, fd, pipex, flag); */
-	error_execve(flag, cmd); //protect fd, pipex
+	error_execve(fds, flag, cmd, argv);
 }

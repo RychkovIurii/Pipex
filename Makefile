@@ -6,13 +6,14 @@
 #    By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/13 13:51:32 by irychkov          #+#    #+#              #
-#    Updated: 2024/08/30 14:40:47 by irychkov         ###   ########.fr        #
+#    Updated: 2024/09/02 22:04:51 by irychkov         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
-SRCS = main.c child_process.c errors.c sys_errors.c checks.c free.c
+SRCS = main.c child_process.c checks.c free.c \
+		errors.c sys_errors.c sys_errors2.c
 
 OBJS = $(SRCS:.c=.o)
 

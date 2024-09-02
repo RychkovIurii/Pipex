@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 15:59:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 21:32:38 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 21:50:02 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static void	execute_command(char *cmd, char **envp, t_pipex *fds)
 	while (*cmd == ' ')
 		cmd++;
 	if (cmd[0] == '\0')
-		error_command(cmd, fds, 0); //check 0 flag
+		error_command(cmd, fds);
 	exec_with_zsh(cmd, envp, fds);
 }
 
@@ -51,38 +51,30 @@ void	first_child(char *av[], t_pipex *fds, char **envp)
 {
 	close(fds->fd[0]);
 	fd_in_init(fds, av);
-	dup2(fds->error_fd1, STDERR_FILENO); //protect
+	if (dup2(fds->error_fd1, STDERR_FILENO) == -1)
+		error_dup(fds);
 	close(fds->error_fd1);
 	if (dup2(fds->pipex[0], STDIN_FILENO) == -1)
 		error_dup(fds);
+	close(fds->pipex[0]);
 	if (dup2(fds->fd[1], STDOUT_FILENO) == -1)
 		error_dup(fds);
 	close(fds->fd[1]);
-	close(fds->pipex[0]);
 	execute_command(av[2], envp, fds);
 }
-
-/* void	wait_exec1(void)
-{
-	int sync_time;
-
-	sync_time = 0;
-	while (sync_time < 10000000)
-		++sync_time;
-} */
 
 void	second_child(char *av[], t_pipex *fds, char **envp)
 {
 	close(fds->fd[1]);
-	//wait_exec1();
 	fd_out_init(fds, av);
-	dup2(fds->error_fd2, STDERR_FILENO); //protect
+	if (dup2(fds->error_fd2, STDERR_FILENO) == -1)
+		error_dup(fds);
 	close(fds->error_fd2);
 	if (dup2(fds->fd[0], STDIN_FILENO) == -1)
 		error_dup(fds);
+	close(fds->fd[0]);
 	if (dup2(fds->pipex[1], STDOUT_FILENO) == -1)
 		error_dup(fds);
-	close(fds->fd[0]);
 	close(fds->pipex[1]);
 	execute_command(av[3], envp, fds);
 }
