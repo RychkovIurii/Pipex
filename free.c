@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 10:02:06 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/28 11:17:44 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 21:17:19 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,18 @@ void	free_set(char **set)
 	free(set);
 }
 
-void	close_pipes(int fd[2], int pipex[2])
+void	close_pipes(t_pipex *fds)
 {
-	if (fd[0] != -1)
-		close(fd[0]);
-	if (fd[1] != -1)
-		close(fd[1]);
-	if (pipex[0] != -1)
-		close(pipex[0]);
-	if (pipex[1] != -1)
-		close(pipex[1]);
+	if (fds->fd[0] >= 0)
+		close(fds->fd[0]);
+	if (fds->fd[1] >= 0)
+		close(fds->fd[1]);
+	if (fds->pipex[0] >= 0)
+		close(fds->pipex[0]);
+	if (fds->pipex[1] >= 0)
+		close(fds->pipex[1]);
+	if (fds->error_fd1 >= 0)
+		close(fds->error_fd1);
+	if (fds->error_fd2 >= 0)
+		close(fds->error_fd2);
 }

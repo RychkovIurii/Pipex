@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:59 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 20:37:44 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 21:22:14 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,27 @@
 # include <fcntl.h>
 # include "libft.h"
 
-void	first_child(char *av[], int *pipex, int *fd, char **envp, int error_fd);
-void	second_child(char *av[], int *pipex, int *fd, char **envp, int error_fd);
-void	exec_with_zsh(char *cmd, char **envp, int fd[2], int pipex[2]);
-void	error_permission(char *name, int code, int fd[2], int pipex[2]);
-void	error_command(char *name, int fd[2], int pipex[2], int flag);
-void	error_nofile(char *name, int code, int fd[2], int pipex[2]);
-void	error_directory(char *name, int code, int fd[2], int pipex[2]);
-void	error_fork(int fd[2], int pipex[2]);
-void	error_malloc(int fd[2], int pipex[2]);
-void	error_dup(int fd[2], int pipex[2]);
+typedef struct s_pipex
+{
+	int	pipex[2];
+	int	fd[2];
+	int	error_fd1;
+	int	error_fd2;
+} t_pipex;
+
+void	first_child(char *av[], t_pipex *fds, char **envp);
+void	second_child(char *av[], t_pipex *fds, char **envp);
+void	exec_with_zsh(char *cmd, char **envp, t_pipex *fds);
+void	error_permission(char *name, int code, t_pipex *fds);
+void	error_command(char *name, t_pipex *fds, int flag);
+void	error_nofile(char *name, int code, t_pipex *fds);
+void	error_directory(char *name, int code, t_pipex *fds);
+void	error_fork(t_pipex *fds);
+void	error_malloc(t_pipex *fds);
+void	error_dup(t_pipex *fds);
 void	error_execve(int flag, char *cmd);
 void	error_waitpid(void);
-void	close_pipes(int fd[2], int pipex[2]);
+void	close_pipes(t_pipex *fds);
 void	free_set(char **set);
 
 #endif

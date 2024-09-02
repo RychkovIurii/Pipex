@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 20:53:57 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 21:39:11 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,44 +65,40 @@ static int	wait_for_children(pid_t pid1, pid_t pid2)
 
 static int	pipex(char *av[], char **envp)
 {
-	int		error_fd1;
-	int		error_fd2;
-	int		pipex[2];
-	int		fd[2];
+	t_pipex	fds;
 	pid_t	pid1;
 	pid_t	pid2;
 
-	ft_memset(pipex, -1, sizeof(pipex));
-	ft_memset(fd, -1, sizeof(fd));
-	if (pipe(fd) == -1)
+	ft_memset(&fds, -1, sizeof(t_pipex));
+	if (pipe(fds.fd) == -1)
 	{
 		perror("pipe failed");
 		exit(1);
 	}
-	error_fd1 = open("/tmp/error1.log", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (error_fd1 < 0)
+	fds.error_fd1 = open("/tmp/error1.log", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fds.error_fd1 < 0)
 	{
 		perror("open failed");
 		exit(1);
 	}
-	error_fd2 = open("/tmp/error2.log", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (error_fd2 < 0)
+	fds.error_fd2 = open("/tmp/error2.log", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fds.error_fd2 < 0)
 	{
 		perror("open failed");
-		close(error_fd1);
+		close(fds.error_fd1);
 		exit(1);
 	}
 	pid1 = fork();
 	if (pid1 == -1)
-		error_fork(fd, pipex);
+		error_fork(&fds);
 	if (pid1 == 0)
-		first_child(av, pipex, fd, envp, error_fd1);
+		first_child(av, &fds, envp);
 	pid2 = fork();
 	if (pid2 == -1)
-		error_fork(fd, pipex);
+		error_fork(&fds);
 	if (pid2 == 0)
-		second_child(av, pipex, fd, envp, error_fd2);
-	close_pipes(fd, pipex);
+		second_child(av, &fds, envp);
+	close_pipes(&fds);
 	return (wait_for_children(pid1, pid2));
 }
 

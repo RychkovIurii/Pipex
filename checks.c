@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 11:09:27 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 20:37:26 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 21:35:13 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static int	is_dollar(char *str)
 	return (0);
 }
 
-static char	*add_backslash(char *str, int fd[2], int pipex[2])
+static char	*add_backslash(char *str, t_pipex *fds)
 {
 	int		i;
 	int		j;
@@ -51,7 +51,7 @@ static char	*add_backslash(char *str, int fd[2], int pipex[2])
 	j = 0;
 	new_str = (char *)malloc(sizeof(char) * (new_len(str) + 1));
 	if (!new_str)
-		error_malloc(fd, pipex);
+		error_malloc(fds);
 	while (str[i])
 	{
 		if (str[i] == '$')
@@ -78,7 +78,7 @@ static int	is_env(char **envp)
 	return (0);
 }
 
-void	exec_with_zsh(char *cmd, char **envp, int fd[2], int pipex[2])
+void	exec_with_zsh(char *cmd, char **envp, t_pipex *fds)
 {
 	int		flag;
 	char	*argv;
@@ -91,7 +91,7 @@ void	exec_with_zsh(char *cmd, char **envp, int fd[2], int pipex[2])
 	zsh_argv[3] = NULL;
 	if (is_dollar(cmd))
 	{
-		cmd = add_backslash(cmd, fd, pipex);
+		cmd = add_backslash(cmd, fds);
 		flag = 1;
 	}
 	zsh_argv[2] = cmd;

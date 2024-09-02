@@ -6,60 +6,60 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 15:59:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 20:35:30 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 21:32:38 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	fd_out_init(int *pipex, char *av[], int fd[2])
+static void	fd_out_init(t_pipex *fds, char *av[])
 {
-	pipex[1] = open(av[4], O_DIRECTORY);
-	if (pipex[1] >= 0)
-		error_directory(av[4], 126, fd, pipex);
+	fds->pipex[1] = open(av[4], O_DIRECTORY);
+	if (fds->pipex[1] >= 0)
+		error_directory(av[4], 126, fds);
 	if (access(av[4], F_OK) == 0 && access(av[4], W_OK) == -1)
-		error_permission(av[4], 1, fd, pipex);
-	pipex[1] = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (pipex[1] < 0)
-		error_nofile(av[4], 1, fd, pipex);
+		error_permission(av[4], 1, fds);
+	fds->pipex[1] = open(av[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fds->pipex[1] < 0)
+		error_nofile(av[4], 1, fds);
 }
 
-static void	fd_in_init(int *pipex, char *av[], int fd[2])
+static void	fd_in_init(t_pipex *fds, char *av[])
 {
 	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) == -1)
-		error_permission(av[1], 126, fd, pipex);
+		error_permission(av[1], 126, fds);
 	else
 	{
-		pipex[0] = open(av[1], O_RDONLY);
-		if (pipex[0] < 0)
-			error_nofile(av[1], 127, fd, pipex);
+		fds->pipex[0] = open(av[1], O_RDONLY);
+		if (fds->pipex[0] < 0)
+			error_nofile(av[1], 127, fds);
 	}
 }
 
-void	execute_command(char *cmd, char **envp, int fd[2], int pipex[2])
+static void	execute_command(char *cmd, char **envp, t_pipex *fds)
 {
 	if (!cmd || cmd[0] == '\0')
-		error_permission(cmd, 126, fd, pipex);
+		error_permission(cmd, 126, fds);
 	while (*cmd == ' ')
 		cmd++;
 	if (cmd[0] == '\0')
-		error_command(cmd, fd, pipex, 0);
-	exec_with_zsh(cmd, envp, fd, pipex);
+		error_command(cmd, fds, 0); //check 0 flag
+	exec_with_zsh(cmd, envp, fds);
 }
 
-void	first_child(char *av[], int *pipex, int *fd, char **envp, int error_fd)
+void	first_child(char *av[], t_pipex *fds, char **envp)
 {
-	close(fd[0]);
-	fd_in_init(pipex, av, fd);
-	dup2(error_fd, STDERR_FILENO); //protect
-	close(error_fd);
-	if (dup2(pipex[0], STDIN_FILENO) == -1)
-		error_dup(fd, pipex);
-	if (dup2(fd[1], STDOUT_FILENO) == -1)
-		error_dup(fd, pipex);
-	close(fd[1]);
-	close(pipex[0]);
-	execute_command(av[2], envp, fd, pipex);
+	close(fds->fd[0]);
+	fd_in_init(fds, av);
+	dup2(fds->error_fd1, STDERR_FILENO); //protect
+	close(fds->error_fd1);
+	if (dup2(fds->pipex[0], STDIN_FILENO) == -1)
+		error_dup(fds);
+	if (dup2(fds->fd[1], STDOUT_FILENO) == -1)
+		error_dup(fds);
+	close(fds->fd[1]);
+	close(fds->pipex[0]);
+	execute_command(av[2], envp, fds);
 }
 
 /* void	wait_exec1(void)
@@ -71,18 +71,18 @@ void	first_child(char *av[], int *pipex, int *fd, char **envp, int error_fd)
 		++sync_time;
 } */
 
-void	second_child(char *av[], int *pipex, int *fd, char **envp, int error_fd)
+void	second_child(char *av[], t_pipex *fds, char **envp)
 {
-	close(fd[1]);
+	close(fds->fd[1]);
 	//wait_exec1();
-	fd_out_init(pipex, av, fd);
-	dup2(error_fd, STDERR_FILENO); //protect
-	close(error_fd);
-	if (dup2(fd[0], STDIN_FILENO) == -1)
-		error_dup(fd, pipex);
-	if (dup2(pipex[1], STDOUT_FILENO) == -1)
-		error_dup(fd, pipex);
-	close(fd[0]);
-	close(pipex[1]);
-	execute_command(av[3], envp, fd, pipex);
+	fd_out_init(fds, av);
+	dup2(fds->error_fd2, STDERR_FILENO); //protect
+	close(fds->error_fd2);
+	if (dup2(fds->fd[0], STDIN_FILENO) == -1)
+		error_dup(fds);
+	if (dup2(fds->pipex[1], STDOUT_FILENO) == -1)
+		error_dup(fds);
+	close(fds->fd[0]);
+	close(fds->pipex[1]);
+	execute_command(av[3], envp, fds);
 }

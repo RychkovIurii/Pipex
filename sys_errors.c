@@ -6,30 +6,30 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 10:36:49 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/29 16:35:43 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 21:38:30 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	error_fork(int fd[2], int pipex[2])
+void	error_fork(t_pipex *fds)
 {
 	perror("fork failed");
-	close_pipes(fd, pipex);
+	close_pipes(fds);
 	exit(1);
 }
 
-void	error_dup(int fd[2], int pipex[2])
+void	error_dup(t_pipex *fds)
 {
 	perror("dup2 failed");
-	close_pipes(fd, pipex);
+	close_pipes(fds);
 	exit(1);
 }
 
-void	error_malloc(int fd[2], int pipex[2])
+void	error_malloc(t_pipex *fds)
 {
 	perror("malloc failed");
-	close_pipes(fd, pipex);
+	close_pipes(fds);
 	exit(1);
 }
 
