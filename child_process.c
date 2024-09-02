@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 15:59:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/31 16:09:56 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 20:35:30 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,35 +47,37 @@ void	execute_command(char *cmd, char **envp, int fd[2], int pipex[2])
 	exec_with_zsh(cmd, envp, fd, pipex);
 }
 
-void	first_child(char *av[], int *pipex, int *fd, char **envp/* , int sync_fd */)
+void	first_child(char *av[], int *pipex, int *fd, char **envp, int error_fd)
 {
 	close(fd[0]);
 	fd_in_init(pipex, av, fd);
+	dup2(error_fd, STDERR_FILENO); //protect
+	close(error_fd);
 	if (dup2(pipex[0], STDIN_FILENO) == -1)
 		error_dup(fd, pipex);
 	if (dup2(fd[1], STDOUT_FILENO) == -1)
 		error_dup(fd, pipex);
 	close(fd[1]);
 	close(pipex[0]);
-/* 	write(sync_fd, "", 1);
-	close(sync_fd); */
 	execute_command(av[2], envp, fd, pipex);
 }
 
-void	wait_exec1(void)
+/* void	wait_exec1(void)
 {
 	int sync_time;
 
 	sync_time = 0;
 	while (sync_time < 10000000)
 		++sync_time;
-}
+} */
 
-void	second_child(char *av[], int *pipex, int *fd, char **envp)
+void	second_child(char *av[], int *pipex, int *fd, char **envp, int error_fd)
 {
 	close(fd[1]);
-	wait_exec1();
+	//wait_exec1();
 	fd_out_init(pipex, av, fd);
+	dup2(error_fd, STDERR_FILENO); //protect
+	close(error_fd);
 	if (dup2(fd[0], STDIN_FILENO) == -1)
 		error_dup(fd, pipex);
 	if (dup2(pipex[1], STDOUT_FILENO) == -1)

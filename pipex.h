@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:59 by irychkov          #+#    #+#             */
-/*   Updated: 2024/08/29 16:35:37 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 20:37:44 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@
 # include <fcntl.h>
 # include "libft.h"
 
-void	first_child(char *av[], int *pipex, int *fd, char **envp);
-void	second_child(char *av[], int *pipex, int *fd, char **envp);
+void	first_child(char *av[], int *pipex, int *fd, char **envp, int error_fd);
+void	second_child(char *av[], int *pipex, int *fd, char **envp, int error_fd);
 void	exec_with_zsh(char *cmd, char **envp, int fd[2], int pipex[2]);
 void	error_permission(char *name, int code, int fd[2], int pipex[2]);
 void	error_command(char *name, int fd[2], int pipex[2], int flag);
