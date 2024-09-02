@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 22:03:32 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 22:24:46 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/02 22:56:06 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,11 @@ void	error_open(void)
 void	error_pipe(void)
 {
 	perror("pipe failed");
+	exit(1);
+}
+
+void	error_unlink(void)
+{
+	perror("unlink failed");
 	exit(1);
 }
