@@ -6,13 +6,13 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 22:45:09 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 22:57:30 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/03 10:17:28 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	handle_file_errors(const char *filename)
+static void	handle_file_errors(const char *filename, t_pipex *fds)
 {
 	int		fd;
 	char	*line;
@@ -30,16 +30,17 @@ static void	handle_file_errors(const char *filename)
 		close(fd);
 	}
 	else
-		error_open();
+		error_open(fds);
 }
 
-static void	check_error_files(const char *file1, const char *file2)
+static void	check_error_files(const char *file1, const char *file2,
+																t_pipex *fds)
 {
-	handle_file_errors(file1);
-	handle_file_errors(file2);
+	handle_file_errors(file1, fds);
+	handle_file_errors(file2, fds);
 }
 
-int	wait_for_children(pid_t pid1, pid_t pid2)
+int	wait_for_children(pid_t pid1, pid_t pid2, t_pipex *fds)
 {
 	int	waitstatus1;
 	int	waitstatus2;
@@ -49,7 +50,7 @@ int	wait_for_children(pid_t pid1, pid_t pid2)
 		error_waitpid();
 	if (waitpid(pid2, &waitstatus2, 0) == -1)
 		error_waitpid();
-	check_error_files("/tmp/error1.log", "/tmp/error2.log");
+	check_error_files("/tmp/error1.log", "/tmp/error2.log", fds);
 	if (unlink("/tmp/error1.log") == -1)
 		error_unlink();
 	if (unlink("/tmp/error2.log") == -1)

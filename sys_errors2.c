@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 22:03:32 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 22:56:06 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/03 10:05:52 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,10 @@ void	error_strjoin(t_pipex *fds, int flag, char *cmd)
 	exit(1);
 }
 
-void	error_open(void)
+void	error_open(t_pipex *fds)
 {
 	perror("open failed");
+	close_pipes(fds);
 	exit(1);
 }
 

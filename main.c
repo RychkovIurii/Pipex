@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 22:51:58 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/03 10:40:54 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,11 @@ static void	get_error_fds(t_pipex *fds)
 	fds->error_fd1 = open("/tmp/error1.log",
 			O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fds->error_fd1 < 0)
-		error_open();
+		error_open(fds);
 	fds->error_fd2 = open("/tmp/error2.log",
 			O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fds->error_fd2 < 0)
-	{
-		close(fds->error_fd1);
-		error_open();
-	}
+		error_open(fds);
 }
 
 static int	pipex(char *av[], char **envp)
@@ -48,7 +45,7 @@ static int	pipex(char *av[], char **envp)
 	if (pid2 == 0)
 		second_child(av, &fds, envp);
 	close_pipes(&fds);
-	return (wait_for_children(pid1, pid2));
+	return (wait_for_children(pid1, pid2, &fds));
 }
 
 int	main(int ac, char *av[], char **envp)
