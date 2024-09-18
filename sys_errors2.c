@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 22:03:32 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/03 10:05:52 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/18 17:21:33 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,26 +16,26 @@ void	error_strjoin(t_pipex *fds, int flag, char *cmd)
 {
 	if (flag)
 		free(cmd);
-	perror("strjoin failed");
+	write(2, "strjoin failed\n", 15);
 	close_pipes(fds);
 	exit(1);
 }
 
 void	error_open(t_pipex *fds)
 {
-	perror("open failed");
+	write(2, "open failed\n", 12);
 	close_pipes(fds);
 	exit(1);
 }
 
 void	error_pipe(void)
 {
-	perror("pipe failed");
+	write(2, "pipe failed\n", 12);
 	exit(1);
 }
 
 void	error_unlink(void)
 {
-	perror("unlink failed");
+	write(2, "unlink failed\n", 14);
 	exit(1);
 }
