@@ -6,12 +6,11 @@
 #    By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/13 13:51:32 by irychkov          #+#    #+#              #
-#    Updated: 2024/09/18 23:48:00 by irychkov         ###   ########.fr        #
+#    Updated: 2024/09/20 13:06:39 by irychkov         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
-BONUS_NAME = pipex_bonus
 
 SRCS = main.c child_process.c checks.c wait_and_print.c \
 		free.c errors.c sys_errors.c sys_errors2.c
@@ -36,30 +35,40 @@ HEADERS_BONUS = -I$(BONUS_DIR) -I$(LIBFT_DIR)
 CFLAGS = -Wall -Wextra -Werror
 CC = cc
 
-all: $(NAME)
+all: mandatory
 
-bonus: $(BONUS_NAME)
+mandatory: .mandatory
+
+.mandatory: $(OBJS) $(LIBFT)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME)
+	@rm -f .bonus
+	@touch .mandatory
+	@echo "Compiled regular version: $(NAME)"
 
 $(LIBFT):
 	@$(MAKE) -C $(LIBFT_DIR)
 
+bonus : .bonus
+
+.bonus: $(BONUS_OBJS) $(LIBFT)
+		$(CC) $(CFLAGS) $(BONUS_OBJS) $(LIBFT) -o $(NAME)
+		@rm -f .mandatory
+		@touch .bonus
+		@echo "Compiled bonus version: $(NAME)"
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@ $(HEADERS)
-	@echo "Compiling: $<"
-
-$(NAME): $(LIBFT) $(OBJS)
-	@$(CC) $(OBJS) $(LIBFT) -o $(NAME)
-
-$(BONUS_NAME): $(LIBFT) $(BONUS_OBJS)
-	@$(CC) $(BONUS_OBJS) $(LIBFT) -o $(BONUS_NAME)
 
 clean:
 	@rm -rf $(OBJS) $(BONUS_OBJS)
-	@$(MAKE) -C $(LIBFT_DIR) clean
+	@$(MAKE) clean -C $(LIBFT_DIR)
+	@rm -f .bonus .mandatory
+	@echo "Cleaned object files"
 
 fclean: clean
-	rm -rf $(NAME) $(BONUS_NAME)
-	@$(MAKE) -C $(LIBFT_DIR) fclean
+	@rm -rf $(NAME)
+	@$(MAKE) fclean -C $(LIBFT_DIR)
+	@echo "Fully cleaned"
 
 re: fclean all
 
