@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:41:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/19 00:20:01 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/20 13:20:59 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,13 @@
 
 typedef struct s_pipex
 {
-	int		**pipes;
 	int		num_cmds;
-	int		pipex[2];
-	int		*error_fds;
-	int		fd[2];
 	int		here_doc;
 	char	*delimiter;
+	int		**pipes;
+	int		pipex[2];
+	int		fd[2];
+	int		*error_fds;
 }	t_pipex;
 
 void	create_error_filename(char **filename, int index);

@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:40:02 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/19 00:19:54 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/20 14:40:18 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,15 @@ static int	count_commands(int ac, char **av, t_pipex *fds)
 	return (num_cmds);
 }
 
+void	close_unused_pipes(t_pipex *fds, int cmd_pos)
+{
+	if (cmd_pos > 0)
+	{
+		close(fds->pipes[cmd_pos - 1][0]);
+		close(fds->pipes[cmd_pos - 1][1]);
+	}
+}
+
 static int	pipex(int ac, char *av[], char **envp)
 {
 	t_pipex	fds;
@@ -115,6 +124,7 @@ static int	pipex(int ac, char *av[], char **envp)
 			error_fork(&fds);
 		if (pids[i] == 0)
 			exec_child(i, &fds, av, envp);
+		close_unused_pipes(&fds, i);
 		i++;
 	}
 	close_pipes(&fds);

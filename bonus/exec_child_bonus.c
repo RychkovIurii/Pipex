@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 22:38:25 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/19 00:17:23 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/20 21:37:14 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,12 @@ static void	execute_command(char *cmd, char **envp, t_pipex *fds)
 
 void	exec_child(int cmd_pos, t_pipex *fds, char *av[], char **envp)
 {
+	int cmd_index;
+
+	if (fds->here_doc)
+		cmd_index = cmd_pos + 3;
+	else
+		cmd_index = cmd_pos + 2;
 	if (dup2(fds->error_fds[cmd_pos], STDERR_FILENO) == -1)
 		error_dup(fds);
 	close(fds->error_fds[cmd_pos]);
@@ -72,6 +78,7 @@ void	exec_child(int cmd_pos, t_pipex *fds, char *av[], char **envp)
 	}
 	else
 	{
+		close(fds->pipes[cmd_pos - 1][1]);
 		dup2(fds->pipes[cmd_pos - 1][0], STDIN_FILENO);
 		close(fds->pipes[cmd_pos - 1][0]);
 	}
@@ -83,8 +90,9 @@ void	exec_child(int cmd_pos, t_pipex *fds, char *av[], char **envp)
 	}
 	else
 	{
+		close(fds->pipes[cmd_pos][0]);
 		dup2(fds->pipes[cmd_pos][1], STDOUT_FILENO);
 		close(fds->pipes[cmd_pos][1]);
 	}
-	execute_command(av[cmd_pos + 2], envp, fds);
+	execute_command(av[cmd_index], envp, fds);
 }
