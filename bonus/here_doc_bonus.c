@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 21:52:50 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/19 00:22:04 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/21 12:59:09 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,10 @@ int	here_doc_input(char *delimiter)
 	{
 		line = get_next_line(0);
 		if (ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0)
+		{
+			free(line);
 			break;
+		}
 		write(pipe_fd[1], line, ft_strlen(line));
 		free(line);
 	}

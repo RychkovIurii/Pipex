@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:40:02 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/20 14:40:18 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/21 13:01:12 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,15 @@ static void	allocate_errors(t_pipex *fds)
 		fds->error_fds[i] = open(error_filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		free(error_filename); //free back
 		if (fds->error_fds[i] < 0)
+		{
+			while (i > 0)
+			{
+				i--;
+				close(fds->error_fds[i]);
+			}
+			free(fds->error_fds);
 			error_open(fds);
+		}
 		i++;
 	}
 }
