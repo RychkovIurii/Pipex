@@ -6,12 +6,11 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 23:05:05 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/18 23:05:11 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:24:02 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
-
 
 void	error_execve(t_pipex *fds, int flag, char *cmd, char *argv)
 {

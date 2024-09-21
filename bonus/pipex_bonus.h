@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:41:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/20 13:20:59 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/21 14:18:27 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@ typedef struct s_pipex
 	char	*delimiter;
 	int		**pipes;
 	int		pipex[2];
-	int		fd[2];
 	int		*error_fds;
 }	t_pipex;
 
+void	initialize_pipex(t_pipex *fds, char *av[], int ac);
 void	create_error_filename(char **filename, int index);
-void	fd_in_init(t_pipex *fds, char *av[]);
+void	execute_command(char *cmd, char **envp, t_pipex *fds);
 void	exec_child(int cmd_pos, t_pipex *fds, char *av[], char **envp);
 void	exec_with_zsh(char *cmd, char **envp, t_pipex *fds);
 int		wait_for_children(pid_t *pids, t_pipex *fds);
