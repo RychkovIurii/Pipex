@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 22:38:25 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/21 14:23:14 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/22 14:27:05 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,14 @@ static void	redirect_error(t_pipex *fds, int cmd_pos)
 	close(fds->error_fds[cmd_pos]);
 }
 
-static void	read_from_pipe(t_pipex *fds, int cmd_pos)
+static void	read_from_pipe(t_pipex *fds, int cmd_pos, char *av[])
 {
 	if (cmd_pos == 0)
 	{
+		if (ft_strncmp(av[1], "here_doc\0", 9) == 0)
+			handle_here_doc(fds, av);
+		else
+			fd_in_init(fds, av);
 		if (dup2(fds->pipex[0], STDIN_FILENO) == -1)
 			error_dup(fds);
 		close(fds->pipex[0]);
@@ -86,7 +90,7 @@ void	exec_child(int cmd_pos, t_pipex *fds, char *av[], char **envp)
 	else
 		cmd_index = cmd_pos + 2;
 	redirect_error(fds, cmd_pos);
-	read_from_pipe(fds, cmd_pos);
+	read_from_pipe(fds, cmd_pos, av);
 	write_to_pipe(fds, cmd_pos, av);
 	execute_command(av[cmd_index], envp, fds);
 }

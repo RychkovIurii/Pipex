@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:59 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/03 10:14:52 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/22 16:08:18 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,5 @@ void	error_open(t_pipex *fds);
 void	error_pipe(void);
 void	error_unlink(void);
 void	close_pipes(t_pipex *fds);
-void	free_set(char **set);
 
 #endif

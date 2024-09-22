@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 23:05:05 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/21 14:24:02 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/22 16:36:21 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,33 +19,34 @@ void	error_execve(t_pipex *fds, int flag, char *cmd, char *argv)
 	if (flag)
 		free(cmd);
 	write(2, "execve failed\n", 14);
-	close_pipes(fds);
+	free_pipex(fds);
 	exit(1);
 }
 
 void	error_fork(t_pipex *fds)
 {
 	write(2, "fork failed\n", 12);
-	close_pipes(fds);
+	free_pipex(fds);
 	exit(1);
 }
 
 void	error_dup(t_pipex *fds)
 {
 	write(2, "dup2 failed\n", 12);
-	close_pipes(fds);
+	free_pipex(fds);
 	exit(1);
 }
 
 void	error_malloc(t_pipex *fds)
 {
 	write(2, "malloc failed\n", 14);
-	close_pipes(fds);
+	free_pipex(fds);
 	exit(1);
 }
 
-void	error_waitpid(void)
+void	error_waitpid(t_pipex *fds)
 {
 	write(2, "waitpid failed\n", 15);
+	free_pipex(fds);
 	exit(1);
 }

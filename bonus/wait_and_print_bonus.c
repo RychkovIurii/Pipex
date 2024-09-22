@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 23:03:56 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/19 00:03:15 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/22 16:37:54 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ static void	check_error_files(t_pipex *fds)
 	i = 0;
 	while (i < fds->num_cmds)
 	{
-		create_error_filename(&error_filename, i + 1);
+		create_error_filename(&error_filename, i + 1, fds);
 		handle_file_errors(error_filename, fds);
 		if (unlink(error_filename) == -1)
-			error_unlink();
+			error_unlink(fds);
 		free(error_filename);
 		i++;
 	}
@@ -60,7 +60,7 @@ int	wait_for_children(pid_t *pids, t_pipex *fds)
 	while (i < fds->num_cmds)
 	{
 		if (waitpid(pids[i], &waitstatus, 0) == -1)
-			error_waitpid();
+			error_waitpid(fds);
 		i++;
 	}
 	check_error_files(fds);

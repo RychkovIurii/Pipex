@@ -6,19 +6,19 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 21:52:50 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/21 14:27:25 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/22 16:22:20 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-int	here_doc_input(char *delimiter)
+static int	here_doc_input(char *delimiter, t_pipex *fds)
 {
 	int		pipe_fd[2];
 	char	*line;
 
 	if (pipe(pipe_fd) == -1)
-		error_pipe();
+		error_pipe(fds);
 	while (1)
 	{
 		line = get_next_line(0);
@@ -38,5 +38,5 @@ void	handle_here_doc(t_pipex *fds, char *av[])
 {
 	fds->here_doc = 1;
 	fds->delimiter = av[2]; //check
-	fds->pipex[0] = here_doc_input(fds->delimiter);
+	fds->pipex[0] = here_doc_input(fds->delimiter, fds);
 }
