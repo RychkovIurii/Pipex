@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:40:02 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/23 09:19:18 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/23 18:09:09 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,32 +47,6 @@ void	fd_out_init(t_pipex *fds, char *av[])
 		error_nofile(av[file_index], 1, fds);
 }
 
-void	create_error_filename(char **filename, int index, t_pipex *fds)
-{
-	size_t		total_len;
-	const char	*base;
-	const char	*extension;
-	char		*index_str;
-
-	base = "/tmp/error";
-	extension = ".log";
-	index_str = ft_itoa(index);
-	if (index_str == NULL)
-		error_err_filename(fds);
-	total_len = ft_strlen(base) + ft_strlen(index_str)
-		+ ft_strlen(extension) + 1;
-	*filename = (char *)malloc(total_len);
-	if (*filename == NULL)
-	{
-		free(index_str);
-		error_err_filename(fds);
-	}
-	ft_strlcpy(*filename, base, total_len);
-	ft_strlcat(*filename, index_str, total_len);
-	ft_strlcat(*filename, extension, total_len);
-	free(index_str);
-}
-
 static void	close_unused_pipes(t_pipex *fds, int cmd_pos)
 {
 	if (cmd_pos > 0)
@@ -111,7 +85,7 @@ int	main(int ac, char *av[], char **envp)
 	int	status;
 
 	status = 1;
-	if (ac > 5)
+	if (ac >= 5)
 		status = pipex(ac, av, envp);
 	else
 		ft_putstr_fd("Usage: ./pipex file1 cmd1 ... cmd2 file2\n", 2);

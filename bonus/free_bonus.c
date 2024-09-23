@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 21:07:02 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/23 09:21:07 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/23 18:05:24 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ static void	close_error_fds(t_pipex *fds)
 	int	i;
 
 	i = 0;
-	
 	if (fds->error_fds)
 	{
 		while (i < fds->num_cmds)
