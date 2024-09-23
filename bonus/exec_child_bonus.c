@@ -6,33 +6,19 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 22:38:25 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/22 14:27:05 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/23 10:53:40 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-static void	fd_out_init(t_pipex *fds, char *av[])
+static void	execute_command(char *cmd, char **envp, t_pipex *fds)
 {
-	int	file_index;
-
-	if (fds->here_doc)
-		file_index = fds->num_cmds + 3;
-	else
-		file_index = fds->num_cmds + 2;
-	fds->pipex[1] = open(av[file_index], O_DIRECTORY);
-	if (fds->pipex[1] >= 0)
-		error_directory(av[file_index], 126, fds);
-	if (access(av[file_index], F_OK) == 0 && access(av[file_index], W_OK) == -1)
-		error_permission(av[file_index], 1, fds);
-	if (fds->here_doc)
-		fds->pipex[1] = open(av[file_index], O_WRONLY
-				| O_CREAT | O_APPEND, 0644);
-	else
-		fds->pipex[1] = open(av[file_index], O_WRONLY
-				| O_CREAT | O_TRUNC, 0644);
-	if (fds->pipex[1] < 0)
-		error_nofile(av[file_index], 1, fds);
+	if (!cmd || cmd[0] == '\0')
+		error_permission(cmd, 126, fds);
+	if (cmd[0] == ' ')
+		error_command(cmd, fds);
+	exec_with_zsh(cmd, envp, fds);
 }
 
 static void	redirect_error(t_pipex *fds, int cmd_pos)
@@ -47,7 +33,7 @@ static void	read_from_pipe(t_pipex *fds, int cmd_pos, char *av[])
 	if (cmd_pos == 0)
 	{
 		if (ft_strncmp(av[1], "here_doc\0", 9) == 0)
-			handle_here_doc(fds, av);
+			handle_here_doc(fds);
 		else
 			fd_in_init(fds, av);
 		if (dup2(fds->pipex[0], STDIN_FILENO) == -1)

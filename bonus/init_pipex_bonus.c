@@ -6,49 +6,26 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 13:55:55 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/22 17:13:02 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/23 10:40:28 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
-
-void	fd_in_init(t_pipex *fds, char *av[])
-{
-	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) == -1)
-		error_permission(av[1], 126, fds);
-	else
-	{
-		fds->pipex[0] = open(av[1], O_RDONLY);
-		if (fds->pipex[0] < 0)
-			error_nofile(av[1], 127, fds);
-	}
-}
 
 static int	count_commands(int ac, char **av, t_pipex *fds)
 {
 	int	num_cmds;
 
 	if (ft_strncmp(av[1], "here_doc\0", 9) == 0)
+	{
 		num_cmds = ac - 4;
+		fds->here_doc = 1;
+		fds->delimiter = av[2];
+	}
 	else
 		num_cmds = ac - 3;
 	fds->num_cmds = num_cmds;
 	return (num_cmds);
-}
-
-static void	free_pipes(t_pipex *fds, int count)
-{
-	int	i;
-
-	i = 0;
-	while (i < count)
-	{
-		close(fds->pipes[i][0]);
-		close(fds->pipes[i][1]);
-		free(fds->pipes[i]);
-		i++;
-	}
-	free(fds->pipes);
 }
 
 static void	allocate_pipes(t_pipex *fds)
@@ -115,32 +92,11 @@ static void	allocate_errors(t_pipex *fds)
 	}
 }
 
-/* static void	initialize_fds(t_pipex *fds)
-{
-	int	i;
-
-	i = 0;
-	fds->pipex[0] = -1;
-	fds->pipex[1] = -1;
-	if (fds->pipes)
-	{
-		while (i < fds->num_cmds - 1)
-		{
-			fds->pipes[i][0] = -1;
-			fds->pipes[i][1] = -1;
-			i++;
-		}
-	}
-} */
-
 void	initialize_pipex(t_pipex *fds, char *av[], int ac)
 {
 	ft_memset(fds, 0, sizeof(t_pipex));
-	fds->pipex[0] = -1;
-	fds->pipex[1] = -1;
 	count_commands(ac, av, fds);
 	allocate_pipes(fds);
-	/* initialize_fds(fds); */
 	allocate_errors(fds);
 	fds->pids = (pid_t *)malloc(sizeof(pid_t) * fds->num_cmds);
 	if (!fds->pids)

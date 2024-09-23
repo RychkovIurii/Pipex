@@ -6,11 +6,46 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:40:02 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/22 17:09:57 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/23 09:19:18 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
+
+void	fd_in_init(t_pipex *fds, char *av[])
+{
+	if (access(av[1], F_OK) == 0 && access(av[1], R_OK) == -1)
+		error_permission(av[1], 126, fds);
+	else
+	{
+		fds->pipex[0] = open(av[1], O_RDONLY);
+		if (fds->pipex[0] < 0)
+			error_nofile(av[1], 127, fds);
+	}
+}
+
+void	fd_out_init(t_pipex *fds, char *av[])
+{
+	int	file_index;
+
+	if (fds->here_doc)
+		file_index = fds->num_cmds + 3;
+	else
+		file_index = fds->num_cmds + 2;
+	fds->pipex[1] = open(av[file_index], O_DIRECTORY);
+	if (fds->pipex[1] >= 0)
+		error_directory(av[file_index], 126, fds);
+	if (access(av[file_index], F_OK) == 0 && access(av[file_index], W_OK) == -1)
+		error_permission(av[file_index], 1, fds);
+	if (fds->here_doc)
+		fds->pipex[1] = open(av[file_index], O_WRONLY
+				| O_CREAT | O_APPEND, 0644);
+	else
+		fds->pipex[1] = open(av[file_index], O_WRONLY
+				| O_CREAT | O_TRUNC, 0644);
+	if (fds->pipex[1] < 0)
+		error_nofile(av[file_index], 1, fds);
+}
 
 void	create_error_filename(char **filename, int index, t_pipex *fds)
 {
@@ -36,15 +71,6 @@ void	create_error_filename(char **filename, int index, t_pipex *fds)
 	ft_strlcat(*filename, index_str, total_len);
 	ft_strlcat(*filename, extension, total_len);
 	free(index_str);
-}
-
-void	execute_command(char *cmd, char **envp, t_pipex *fds)
-{
-	if (!cmd || cmd[0] == '\0')
-		error_permission(cmd, 126, fds);
-	if (cmd[0] == ' ')
-		error_command(cmd, fds);
-	exec_with_zsh(cmd, envp, fds);
 }
 
 static void	close_unused_pipes(t_pipex *fds, int cmd_pos)

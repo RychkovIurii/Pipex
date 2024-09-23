@@ -6,13 +6,28 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 21:07:02 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/22 16:11:33 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/23 09:21:07 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-void	close_error_fds(t_pipex *fds)
+void	free_pipes(t_pipex *fds, int count)
+{
+	int	i;
+
+	i = 0;
+	while (i < count)
+	{
+		close(fds->pipes[i][0]);
+		close(fds->pipes[i][1]);
+		free(fds->pipes[i]);
+		i++;
+	}
+	free(fds->pipes);
+}
+
+static void	close_error_fds(t_pipex *fds)
 {
 	int	i;
 
@@ -31,7 +46,7 @@ void	close_error_fds(t_pipex *fds)
 	}
 }
 
-void	close_middle_fds(t_pipex *fds)
+static void	close_middle_fds(t_pipex *fds)
 {
 	int	i;
 
