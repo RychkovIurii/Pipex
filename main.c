@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/03 10:40:54 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/24 23:22:33 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,13 @@
 
 static void	get_error_fds(t_pipex *fds)
 {
-	fds->error_fd1 = open("/tmp/error1.log",
+	create_error_filename(&fds->error_filename1, 1, fds);
+	create_error_filename(&fds->error_filename2, 2, fds);
+	fds->error_fd1 = open(fds->error_filename1,
 			O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fds->error_fd1 < 0)
 		error_open(fds);
-	fds->error_fd2 = open("/tmp/error2.log",
+	fds->error_fd2 = open(fds->error_filename2,
 			O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fds->error_fd2 < 0)
 		error_open(fds);

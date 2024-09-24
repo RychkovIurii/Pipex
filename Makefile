@@ -6,14 +6,14 @@
 #    By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/13 13:51:32 by irychkov          #+#    #+#              #
-#    Updated: 2024/09/24 21:54:06 by irychkov         ###   ########.fr        #
+#    Updated: 2024/09/24 22:18:02 by irychkov         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
 SRCS = main.c child_process.c checks.c wait_and_print.c \
-		free.c errors.c sys_errors.c sys_errors2.c
+		free.c errors.c sys_errors.c sys_errors2.c error_filename.c
 
 BONUS_SRCS = $(BONUS_DIR)/main_bonus.c $(BONUS_DIR)/exec_child_bonus.c \
 		$(BONUS_DIR)/checks_bonus.c $(BONUS_DIR)/wait_and_print_bonus.c \

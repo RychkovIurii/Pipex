@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 22:45:09 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/03 10:17:28 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/24 23:28:11 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,10 @@ static void	handle_file_errors(const char *filename, t_pipex *fds)
 		error_open(fds);
 }
 
-static void	check_error_files(const char *file1, const char *file2,
-																t_pipex *fds)
+static void	check_error_files(t_pipex *fds)
 {
-	handle_file_errors(file1, fds);
-	handle_file_errors(file2, fds);
+	handle_file_errors(fds->error_filename1, fds);
+	handle_file_errors(fds->error_filename2, fds);
 }
 
 int	wait_for_children(pid_t pid1, pid_t pid2, t_pipex *fds)
@@ -47,14 +46,14 @@ int	wait_for_children(pid_t pid1, pid_t pid2, t_pipex *fds)
 	int	signal_number;
 
 	if (waitpid(pid1, &waitstatus1, 0) == -1)
-		error_waitpid();
+		error_waitpid(fds);
 	if (waitpid(pid2, &waitstatus2, 0) == -1)
-		error_waitpid();
-	check_error_files("/tmp/error1.log", "/tmp/error2.log", fds);
-	if (unlink("/tmp/error1.log") == -1)
-		error_unlink();
-	if (unlink("/tmp/error2.log") == -1)
-		error_unlink();
+		error_waitpid(fds);
+	check_error_files(fds);
+	if (unlink(fds->error_filename1) == -1)
+		error_unlink(fds);
+	if (unlink(fds->error_filename2) == -1)
+		error_unlink(fds);
 	if (WIFSIGNALED(waitstatus2))
 	{
 		signal_number = WTERMSIG(waitstatus2);
