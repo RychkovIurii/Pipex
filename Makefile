@@ -6,7 +6,7 @@
 #    By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/13 13:51:32 by irychkov          #+#    #+#              #
-#    Updated: 2024/09/21 14:19:41 by irychkov         ###   ########.fr        #
+#    Updated: 2024/09/24 21:54:06 by irychkov         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,8 @@ BONUS_SRCS = $(BONUS_DIR)/main_bonus.c $(BONUS_DIR)/exec_child_bonus.c \
 		$(BONUS_DIR)/checks_bonus.c $(BONUS_DIR)/wait_and_print_bonus.c \
 		$(BONUS_DIR)/free_bonus.c $(BONUS_DIR)/errors_bonus.c \
 		$(BONUS_DIR)/sys_errors_bonus.c $(BONUS_DIR)/sys_errors2_bonus.c \
-		$(BONUS_DIR)/here_doc_bonus.c $(BONUS_DIR)/init_pipex_bonus.c
+		$(BONUS_DIR)/here_doc_bonus.c $(BONUS_DIR)/init_pipex_bonus.c \
+		$(BONUS_DIR)/error_filename_bonus.c
 
 BONUS_DIR = ./bonus
 

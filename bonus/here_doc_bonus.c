@@ -6,37 +6,11 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 21:52:50 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/23 18:24:59 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/24 21:54:13 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
-
-void	create_error_filename(char **filename, int index, t_pipex *fds)
-{
-	size_t		total_len;
-	const char	*base;
-	const char	*extension;
-	char		*index_str;
-
-	base = "/tmp/error";
-	extension = ".log";
-	index_str = ft_itoa(index);
-	if (index_str == NULL)
-		error_err_filename(fds);
-	total_len = ft_strlen(base) + ft_strlen(index_str)
-		+ ft_strlen(extension) + 1;
-	*filename = (char *)malloc(total_len);
-	if (*filename == NULL)
-	{
-		free(index_str);
-		error_err_filename(fds);
-	}
-	ft_strlcpy(*filename, base, total_len);
-	ft_strlcat(*filename, index_str, total_len);
-	ft_strlcat(*filename, extension, total_len);
-	free(index_str);
-}
 
 static int	is_continue(char *line, char *delimiter)
 {

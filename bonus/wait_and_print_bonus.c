@@ -6,13 +6,13 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 23:03:56 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/22 16:37:54 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/24 22:08:43 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-static void	handle_file_errors(const char *filename, t_pipex *fds)
+static void	handle_file_errors(char *filename, t_pipex *fds)
 {
 	int		fd;
 	char	*line;
@@ -30,7 +30,10 @@ static void	handle_file_errors(const char *filename, t_pipex *fds)
 		close(fd);
 	}
 	else
+	{
+		free(filename);
 		error_open(fds);
+	}
 }
 
 static void	check_error_files(t_pipex *fds)
@@ -44,7 +47,10 @@ static void	check_error_files(t_pipex *fds)
 		create_error_filename(&error_filename, i + 1, fds);
 		handle_file_errors(error_filename, fds);
 		if (unlink(error_filename) == -1)
+		{
+			free(error_filename);
 			error_unlink(fds);
+		}
 		free(error_filename);
 		i++;
 	}
