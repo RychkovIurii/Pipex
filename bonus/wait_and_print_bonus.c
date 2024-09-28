@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 23:03:56 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/24 22:08:43 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/28 20:38:29 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,32 @@ static void	handle_file_errors(char *filename, t_pipex *fds)
 	}
 }
 
+void	free_error_filenames(t_pipex *fds, int count)
+{
+	int	i;
+
+	i = 0;
+	if (!fds->error_filenames)
+		return ;
+	while (i < count)
+	{
+		free(fds->error_filenames[i]);
+		i++;
+	}
+	free(fds->error_filenames);
+	fds->error_filenames = NULL;
+}
+
 static void	check_error_files(t_pipex *fds)
 {
 	int		i;
-	char	*error_filename;
 
 	i = 0;
 	while (i < fds->num_cmds)
 	{
-		create_error_filename(&error_filename, i + 1, fds);
-		handle_file_errors(error_filename, fds);
-		if (unlink(error_filename) == -1)
-		{
-			free(error_filename);
+		handle_file_errors(fds->error_filenames[i], fds);
+		if (unlink(fds->error_filenames[i]) == -1)
 			error_unlink(fds);
-		}
-		free(error_filename);
 		i++;
 	}
 }

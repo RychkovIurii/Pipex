@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:59 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/24 23:29:41 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/28 16:47:34 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PIPEX_H
 
 # include <sys/wait.h>
+# include <stdint.h>
 # include <stdio.h>
 # include <fcntl.h>
 # include "libft.h"

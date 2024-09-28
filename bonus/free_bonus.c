@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 21:07:02 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/23 18:05:24 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/28 20:39:25 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,5 @@ void	free_pipex(t_pipex *fds)
 	if (fds->pids)
 		free(fds->pids);
 	close_pipes(fds);
+	free_error_filenames(fds, fds->num_cmds);
 }

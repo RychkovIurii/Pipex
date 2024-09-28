@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 13:55:55 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/23 10:40:28 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/28 20:39:36 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,22 +70,23 @@ static void	free_error_fds(t_pipex *fds, int count)
 static void	allocate_errors(t_pipex *fds)
 {
 	int		i;
-	char	*error_filename;
 
 	i = 0;
-	error_filename = NULL;
 	fds->error_fds = (int *)malloc(sizeof(int) * fds->num_cmds);
 	if (!fds->error_fds)
 		error_malloc(fds);
+	fds->error_filenames = (char **)malloc(sizeof(char *) * fds->num_cmds);
+	if (!fds->error_filenames)
+		error_malloc(fds);
 	while (i < fds->num_cmds)
 	{
-		create_error_filename(&error_filename, i + 1, fds);
-		fds->error_fds[i] = open(error_filename, O_WRONLY
+		create_error_filename(&(fds->error_filenames[i]), i + 1, fds);
+		fds->error_fds[i] = open(fds->error_filenames[i], O_WRONLY
 				| O_CREAT | O_TRUNC, 0644);
-		free(error_filename);
 		if (fds->error_fds[i] < 0)
 		{
 			free_error_fds(fds, i);
+			free_error_filenames(fds, i);
 			error_open(fds);
 		}
 		i++;

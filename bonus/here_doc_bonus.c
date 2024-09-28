@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 21:52:50 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/24 21:54:13 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/28 20:39:08 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ static int	here_doc_input(char *delimiter, t_pipex *fds)
 	{
 		ft_putstr_fd("heredoc> ", 1);
 		line = get_next_line(0);
+		if (!line)
+			break ;
 		if (!is_continue(line, delimiter))
 			break ;
 		write(pipe_fd[1], line, ft_strlen(line));

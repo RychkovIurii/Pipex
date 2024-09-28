@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:41:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/23 10:42:46 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/28 16:40:48 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PIPEX_BONUS_H
 
 # include <sys/wait.h>
+# include <stdint.h>
 # include <stdio.h>
 # include <fcntl.h>
 # include "libft.h"
@@ -26,6 +27,7 @@ typedef struct s_pipex
 	int		**pipes;
 	int		pipex[2];
 	int		*error_fds;
+	char	**error_filenames;
 	pid_t	*pids;
 }	t_pipex;
 
@@ -52,6 +54,7 @@ void	error_pipe(t_pipex *fds);
 void	error_unlink(t_pipex *fds);
 void	error_err_filename(t_pipex *fds);
 void	close_pipes(t_pipex *fds);
+void	free_error_filenames(t_pipex *fds, int count);
 void	free_pipes(t_pipex *fds, int count);
 void	free_pipex(t_pipex *fds);
 
