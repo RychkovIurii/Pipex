@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 22:45:09 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/28 21:15:04 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/29 01:27:22 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ int	wait_for_children(pid_t pid1, pid_t pid2, t_pipex *fds)
 		error_waitpid(fds);
 	check_error_files(fds);
 	remove_errorfiles(fds);
+	free_pipex(fds);
 	if (WIFSIGNALED(waitstatus2))
 	{
 		signal_number = WTERMSIG(waitstatus2);

@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 18:40:57 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/02 21:43:04 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/29 00:56:19 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,27 +25,27 @@ static void	error_msg(char *msg, char *name)
 void	error_permission(char *name, int code, t_pipex *fds)
 {
 	error_msg("permission denied", name);
-	close_pipes(fds);
+	free_pipex(fds);
 	exit (code);
 }
 
 void	error_command(char *name, t_pipex *fds)
 {
 	error_msg("command not found", name);
-	close_pipes(fds);
+	free_pipex(fds);
 	exit (127);
 }
 
 void	error_nofile(char *name, int code, t_pipex *fds)
 {
 	error_msg("no such file or directory", name);
-	close_pipes(fds);
+	free_pipex(fds);
 	exit (code);
 }
 
 void	error_directory(char *name, int code, t_pipex *fds)
 {
 	error_msg("is a directory", name);
-	close_pipes(fds);
+	free_pipex(fds);
 	exit (code);
 }
