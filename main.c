@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/24 23:22:33 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/28 21:08:29 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	pipex(char *av[], char **envp)
 	pid_t	pid1;
 	pid_t	pid2;
 
-	ft_memset(&fds, -1, sizeof(t_pipex));
+	ft_memset(&fds, -1, sizeof(t_pipex)); //need to check this
 	if (pipe(fds.fd) == -1)
 		error_pipe();
 	get_error_fds(&fds);

@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 13:55:55 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/28 20:39:36 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/28 21:08:57 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ static void	allocate_errors(t_pipex *fds)
 
 void	initialize_pipex(t_pipex *fds, char *av[], int ac)
 {
-	ft_memset(fds, 0, sizeof(t_pipex));
+	ft_memset(fds, 0, sizeof(t_pipex)); //need to check this
 	count_commands(ac, av, fds);
 	allocate_pipes(fds);
 	allocate_errors(fds);
