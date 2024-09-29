@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 13:53:16 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/28 21:08:29 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/29 17:53:45 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,25 @@ static void	get_error_fds(t_pipex *fds)
 		error_open(fds);
 }
 
+static void	init_pipex(t_pipex *pipex)
+{
+	pipex->pipex[0] = -1;
+	pipex->pipex[1] = -1;
+	pipex->fd[0] = -1;
+	pipex->fd[1] = -1;
+	pipex->error_fd1 = -1;
+	pipex->error_fd2 = -1;
+	pipex->error_filename1 = NULL;
+	pipex->error_filename2 = NULL;
+}
+
 static int	pipex(char *av[], char **envp)
 {
 	t_pipex	fds;
 	pid_t	pid1;
 	pid_t	pid2;
 
-	ft_memset(&fds, -1, sizeof(t_pipex)); //need to check this
+	init_pipex(&fds);
 	if (pipe(fds.fd) == -1)
 		error_pipe();
 	get_error_fds(&fds);
