@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 13:55:55 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/28 21:08:57 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/29 19:40:25 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ static void	allocate_errors(t_pipex *fds)
 		if (fds->error_fds[i] < 0)
 		{
 			free_error_fds(fds, i);
+			remove_errorfiles(fds, i);
 			free_error_filenames(fds, i);
 			error_open(fds);
 		}
@@ -95,11 +96,14 @@ static void	allocate_errors(t_pipex *fds)
 
 void	initialize_pipex(t_pipex *fds, char *av[], int ac)
 {
-	ft_memset(fds, 0, sizeof(t_pipex)); //need to check this
+	ft_memset(fds, 0, sizeof(t_pipex));
 	count_commands(ac, av, fds);
 	allocate_pipes(fds);
 	allocate_errors(fds);
 	fds->pids = (pid_t *)malloc(sizeof(pid_t) * fds->num_cmds);
 	if (!fds->pids)
+	{
+		remove_errorfiles(fds, fds->num_cmds);
 		error_malloc(fds);
+	}
 }

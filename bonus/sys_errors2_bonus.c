@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 23:04:30 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/22 16:35:38 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/29 19:39:23 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,16 +35,15 @@ void	error_pipe(t_pipex *fds)
 	exit(1);
 }
 
-void	error_unlink(t_pipex *fds)
+void	error_unlink(void)
 {
 	write(2, "unlink failed\n", 14);
-	free_pipex(fds);
-	exit(1);
 }
 
 void	error_err_filename(t_pipex *fds)
 {
 	write(2, "error filename failed\n", 22);
+	remove_errorfiles(fds, fds->num_cmds);
 	free_pipex(fds);
 	exit(1);
 }

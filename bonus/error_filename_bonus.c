@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 21:52:29 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/28 20:42:02 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/29 19:29:35 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	create_error_filename(char **filename, int index, t_pipex *fds)
 	char		*index_str;
 	char		*address_str;
 
-	base = "./error";/* base = "/tmp/error"; */
+	base = "/tmp/error";
 	index_str = ft_itoa(index);
 	if (index_str == NULL)
 		error_err_filename(fds);
@@ -76,4 +76,20 @@ void	create_error_filename(char **filename, int index, t_pipex *fds)
 	*filename = generate_filename(base, index_str, address_str, fds);
 	free(index_str);
 	free(address_str);
+}
+
+void	remove_errorfiles(t_pipex *fds, int count)
+{
+	int	i;
+
+	i = 0;
+	while (i < count)
+	{
+		if (fds->error_filenames[i])
+		{
+			if (unlink(fds->error_filenames[i]) == -1)
+				error_unlink();
+		}
+		i++;
+	}
 }

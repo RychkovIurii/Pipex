@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 23:03:56 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/28 20:38:29 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/29 19:23:34 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static void	handle_file_errors(char *filename, t_pipex *fds)
 	}
 	else
 	{
-		free(filename);
+		remove_errorfiles(fds, fds->num_cmds);
 		error_open(fds);
 	}
 }
@@ -61,7 +61,7 @@ static void	check_error_files(t_pipex *fds)
 	{
 		handle_file_errors(fds->error_filenames[i], fds);
 		if (unlink(fds->error_filenames[i]) == -1)
-			error_unlink(fds);
+			error_unlink();
 		i++;
 	}
 }

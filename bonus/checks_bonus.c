@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 22:59:09 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/18 22:59:18 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/29 19:52:35 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ void	exec_with_zsh(char *cmd, char **envp, t_pipex *fds)
 			error_strjoin(fds, flag, cmd);
 		zsh_argv[2] = argv;
 	}
+	free_error_filenames(fds, fds->num_cmds);
 	execve("/bin/zsh", zsh_argv, envp);
 	error_execve(fds, flag, cmd, argv);
 }

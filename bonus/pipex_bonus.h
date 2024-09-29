@@ -6,7 +6,7 @@
 /*   By: irychkov <irychkov@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 20:41:12 by irychkov          #+#    #+#             */
-/*   Updated: 2024/09/28 16:40:48 by irychkov         ###   ########.fr       */
+/*   Updated: 2024/09/29 19:02:56 by irychkov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,12 @@ void	error_dup(t_pipex *fds);
 void	error_waitpid(t_pipex *fds);
 void	error_open(t_pipex *fds);
 void	error_pipe(t_pipex *fds);
-void	error_unlink(t_pipex *fds);
+void	error_unlink(void);
 void	error_err_filename(t_pipex *fds);
 void	close_pipes(t_pipex *fds);
 void	free_error_filenames(t_pipex *fds, int count);
 void	free_pipes(t_pipex *fds, int count);
 void	free_pipex(t_pipex *fds);
+void	remove_errorfiles(t_pipex *fds, int count);
 
 #endif
