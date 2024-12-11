@@ -36,6 +36,11 @@ Shell commands sometimes produce errors that are not in a consistent order, depe
 
 ---
 
+## Allowed Functions
+open, close, read, write, malloc, free, perror, strerror, access, dup, dup2, execve, exit, fork, pipe, unlink, wait, waitpid, ft_printf.
+
+---
+
 ## Features
 Mandatory Part:  
 The program takes four arguments: file1, cmd1, cmd2, and file2.  
